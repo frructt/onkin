@@ -1,5 +1,7 @@
+import uvicorn
 from fastapi import FastAPI, HTTPException
 from starlette.requests import Request
+from starlette.responses import JSONResponse
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 
@@ -30,5 +32,5 @@ def get_all_films():
     return serialized_films
 
 
-# if __name__ == '__main__':
-#     uvicorn.run(app)
+if __name__ == '__main__':
+    uvicorn.run(app, host='127.0.0.1', port=8000)
