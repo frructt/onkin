@@ -14,7 +14,7 @@ def get_log_file_path(file):
 def get_config_file_path(file):
     file_dir = path.dirname(path.abspath(file))
     print(file_dir)
-    if path.basename(file_dir) in ['FilmAggregator', 's']:
+    if path.basename(file_dir) in ['onkin', 's']:
         file_path = path.join(str(file_dir), 'resources/config.ini')
         print(file_path)
         return file_path
@@ -23,7 +23,7 @@ def get_config_file_path(file):
         print(parent_dir)
         file_path = path.join(str(parent_dir), 'resources/config.ini')
         print(file_path)
-        while path.basename(parent_dir) not in ['FilmAggregator', 's']:
+        while path.basename(parent_dir) not in ['onkin', 's']:
             parent_dir = path.dirname(parent_dir)
             file_path = path.join(str(parent_dir), 'resources/config.ini')
         return file_path
