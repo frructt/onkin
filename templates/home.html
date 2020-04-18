@@ -3,7 +3,9 @@
 	{% for film in films %}
 		<article class="media content-section">
 			<div class="media-body">
-				<h2><a class="film-title" href="#">{{ film.name }}</a></h2>
+				<h2>
+					<a class="film-title" href="#">{{ film.name }}</a>
+				</h2>
 				<div class="film-metadata">
 					<a class="mr-2" href="#">{{ film.genre }}</a>
 					<small class="text-muted">{{ film.year }}</small>
