@@ -1,0 +1,22 @@
+from film_aggregator import db
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default="default.jpg")
+    password = db.Column(db.String(60), nullable=False)
+
+    def __ref__(self):
+        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+
+
+class Film(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    year = db.Column(db.String(4), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+
+    def __ref__(self):
+        return f"Film('{self.title}', '{self.year}', '{self.description}')"
