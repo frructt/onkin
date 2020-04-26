@@ -12,4 +12,5 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.login_message_category = "info"
 
-from film_aggregator import routes
+from film_aggregator import routes, import_imdb_dataset
+import_imdb_dataset.run_db_imports()
