@@ -62,11 +62,13 @@ def import_dataset(dataset_file, headers, dtypes, base_name):
 
     chunk_list = []  # append each chunk df here
     for chunk in df_chunk:
-        chunk_filter = chunk.where(pd.notnull(chunk), None)  # perform data filtering
+        # perform data filtering
+        chunk_filter = chunk.where(pd.notnull(
+            chunk.replace(dict.fromkeys(['N/A', '', 'unknown', 'N/A_N/A', '\\N', 'nan'], None))), None)
         chunk_list.append(chunk_filter)  # Once the data filtering is done, append the chunk to list
 
     df_concat = pd.concat(chunk_list)  # concat the list into dataframe
-    df_concat.info(memory_usage="deep")
+    # df_concat.info(memory_usage="deep")
 
     # solution #1
     # df = pd.DataFrame(data=df_concat)

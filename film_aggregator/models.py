@@ -33,7 +33,7 @@ class Film(db.Model):
 
 class ImdbBasicName(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    primaryId = db.Column(db.String(11), unique=False, nullable=True)
+    primaryId = db.Column(db.String(11), unique=False, nullable=False)
     primaryName = db.Column(db.String(100), unique=False, nullable=True)
     birthYear = db.Column(db.Integer,  unique=False, nullable=True)
     deathYear = db.Column(db.Integer, unique=False, nullable=True)
@@ -65,14 +65,14 @@ class ImdbAkas(db.Model):
 
 class ImdbCrew(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    primaryId = db.Column(db.String, unique=False, nullable=True)
+    primaryId = db.Column(db.String, unique=False, nullable=False)
     directors = db.Column(db.String, unique=False, nullable=True)
     writers = db.Column(db.String, unique=False, nullable=True)
 
 
 class ImdbEpisode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    primaryId = db.Column(db.String, unique=False, nullable=True)
+    primaryId = db.Column(db.String, unique=False, nullable=False)
     parentPrimaryId = db.Column(db.String, unique=False, nullable=True)
     seasonNumber = db.Column(db.Integer, unique=False, nullable=True)
     episodeNumber = db.Column(db.Integer, unique=False, nullable=True)
@@ -80,14 +80,14 @@ class ImdbEpisode(db.Model):
 
 class ImdbRaitings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    primaryId = db.Column(db.String, unique=False, nullable=True)
+    primaryId = db.Column(db.String, unique=False, nullable=False)
     averageRating = db.Column(db.Float, unique=False, nullable=True)
     numVotes = db.Column(db.Float, unique=False, nullable=True)
 
 
 class ImdbTitleBasics(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    primaryId = db.Column(db.String, unique=False, nullable=True)
+    primaryId = db.Column(db.String, unique=False, nullable=False)
     titleType = db.Column(db.String, unique=False, nullable=True)
     primaryTitle = db.Column(db.String, unique=False, nullable=True)
     originalTitle = db.Column(db.String, unique=False, nullable=True)
