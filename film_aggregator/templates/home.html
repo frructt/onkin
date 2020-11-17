@@ -7,7 +7,7 @@
 					<a class="film-title" href="#">{{ film.name }}</a>
 				</h2>
 				<div class="film-metadata">
-					<a class="mr-2" href="#">{{ film.fileContent }}</a>
+					<a class="mr-2" href="#"><img src="data:;base64,{{ base64.b64encode(film.fileContent).decode('utf-8') }}" alt="{{ film.name }}"></a>
 				</div>
 			</div>
 		</article>

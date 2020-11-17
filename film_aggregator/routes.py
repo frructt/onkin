@@ -3,6 +3,7 @@ from film_aggregator.forms import RegistrationForm, LoginForm
 from film_aggregator import app, db, bcrypt
 from film_aggregator.models import User, Film, UploadedFile
 from flask_login import login_user, current_user, logout_user, login_required
+import base64
 
 # films = [
 #     {
@@ -27,7 +28,8 @@ from flask_login import login_user, current_user, logout_user, login_required
 @app.route("/home")
 def home():
     files = UploadedFile.query.all()
-    return render_template("home.html", films=files)
+    # image = base64.b64encode(files[0].fileContent).decode("utf-8")
+    return render_template("home.html", films=files, base64=base64)
 
 
 @app.route("/about")
