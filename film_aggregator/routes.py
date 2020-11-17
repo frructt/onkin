@@ -1,32 +1,33 @@
 from flask import render_template, url_for, flash, redirect, request
 from film_aggregator.forms import RegistrationForm, LoginForm
 from film_aggregator import app, db, bcrypt
-from film_aggregator.models import User, Film
+from film_aggregator.models import User, Film, UploadedFile
 from flask_login import login_user, current_user, logout_user, login_required
 
-films = [
-    {
-        "name": "name1",
-        "genre": "genre1",
-        "year": 2005
-    },
-    {
-        "name": "name2",
-        "genre": "genre2",
-        "year": 2006
-    },
-    {
-        "name": "name3",
-        "genre": "genre3",
-        "year": 2005
-    }
-]
+# films = [
+#     {
+#         "name": "name1",
+#         "genre": "genre1",
+#         "year": 2005
+#     },
+#     {
+#         "name": "name2",
+#         "genre": "genre2",
+#         "year": 2006
+#     },
+#     {
+#         "name": "name3",
+#         "genre": "genre3",
+#         "year": 2005
+#     }
+# ]
 
 
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template("home.html", films=films)
+    files = UploadedFile.query.all()
+    return render_template("home.html", films=files)
 
 
 @app.route("/about")
@@ -79,3 +80,15 @@ def logout():
 @login_required
 def account():
     return render_template("account.html", title="Account")
+
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload_file():
+    if request.method == "POST":
+        file = request.files["upload"]
+        new_file = UploadedFile(name=file.filename, fileContent=file.read())
+        db.session.add(new_file)
+        db.session.commit()
+        flash("Your file {} has been uploaded!".format(file.filename), "success")
+        return redirect(url_for("home"))
+    return render_template("upload.html", title="Upload")
