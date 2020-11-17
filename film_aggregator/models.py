@@ -28,6 +28,12 @@ class Film(db.Model):
         return f"Film('{self.title}', '{self.year}', '{self.description}')"
 
 
+class UploadedFile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    fileContent = db.Column(db.LargeBinary, nullable=False)
+
+
 class ImdbBasicName(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     primaryId = db.Column(db.String(11), unique=False, nullable=False)
