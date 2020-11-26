@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request
 from film_aggregator.forms import RegistrationForm, LoginForm
-from film_aggregator import app, db, bcrypt
-from film_aggregator.models import User, Film, UploadedFile
+from film_aggregator import app, db, bcrypt, file_upload
+from film_aggregator.models import User, Film, UploadedFile, DemoFileStreamTable1
 from flask_login import login_user, current_user, logout_user, login_required
 import base64
 
@@ -88,7 +88,10 @@ def account():
 def upload_file():
     if request.method == "POST":
         file = request.files["upload"]
-        new_file = UploadedFile(name=file.filename, fileContent=file.read())
+        new_file = DemoFileStreamTable1(filename=file.filename)
+        new_file = file_upload.update_files(new_file, files={
+            "upload": file.read()
+        })
         db.session.add(new_file)
         db.session.commit()
         flash("Your file {} has been uploaded!".format(file.filename), "success")
