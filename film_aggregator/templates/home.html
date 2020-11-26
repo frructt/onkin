@@ -7,7 +7,12 @@
 					<a class="film-title" href="#">{{ film.name }}</a>
 				</h2>
 				<div class="film-metadata">
-					<a class="mr-2" href="#"><img src="data:;base64,{{ base64.b64encode(film.fileContent).decode('utf-8') }}" alt="{{ film.name }}"></a>
+<!--					<a class="mr-2" href="#"><img src="data:;base64,{{ base64.b64encode(film.fileContent).decode('utf-8') }}" alt="{{ film.name }}"></a>-->
+					<video  width="400" height="300" controls="controls">
+<!--						<source src="film.fileContent" type='video/ogg; codecs="theora, vorbis"'>-->
+						<source src="film.File" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+<!--						<source src="film.fileContent" type='video/webm; codecs="vp8, vorbis"'>-->
+					</video>
 				</div>
 			</div>
 		</article>
