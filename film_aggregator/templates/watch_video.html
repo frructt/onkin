@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+	{% for video in video_list %}
+		<article class="media content-section">
+			<div class="media-body">
+<!--				<h2>-->
+<!--				</h2>-->
+				<div class="film-metadata">
+					<video  width="400" height="300" controls="controls">
+						<source src="{{ url_for('upload', filename=video.my_file__file_name) }}" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+					</video>
+				</div>
+			</div>
+		</article>
+	{% endfor %}
+{% endblock content %}
