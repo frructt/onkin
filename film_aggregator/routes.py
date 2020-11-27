@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, send_from_directory
 from film_aggregator.forms import RegistrationForm, LoginForm
 from film_aggregator import app, db, bcrypt, file_upload
 from film_aggregator.models import User, Film, UploadedFile, DemoFileStreamTable1
@@ -27,9 +27,17 @@ import base64
 @app.route("/")
 @app.route("/home")
 def home():
-    files = UploadedFile.query.all()
+    files = DemoFileStreamTable1.query.filter_by(id=1).first()
     # image = base64.b64encode(files[0].fileContent).decode("utf-8")
-    return render_template("home.html", films=files, base64=base64)
+    # test1 = file_upload.stream_file(files, filename="my_file")
+    test1 = file_upload.get_file_url(files, filename="my_file")
+    return render_template("home.html", films=[test1])
+
+
+@app.route('/uploads/<path:filename>')
+def download_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename, as_attachment=True)
 
 
 @app.route("/about")
@@ -88,12 +96,12 @@ def account():
 def upload_file():
     if request.method == "POST":
         file = request.files["upload"]
-        new_file = DemoFileStreamTable1(filename=file.filename)
+        new_file = DemoFileStreamTable1()
         new_file = file_upload.update_files(new_file, files={
-            "upload": file.read()
+            "my_file": file
         })
-        db.session.add(new_file)
-        db.session.commit()
+        # db.session.add(new_file)
+        # db.session.commit()
         flash("Your file {} has been uploaded!".format(file.filename), "success")
         return redirect(url_for("home"))
     return render_template("upload.html", title="Upload")
