@@ -41,7 +41,7 @@ class UploadedFile(db.Model):
 class DemoFileStreamTable1(db.Model):
     __tablename__ = "demoTable"
     id = db.Column(db.Integer, primary_key=True)
-    # filename = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(200), nullable=False, unique=True)
     my_file = file_upload.Column()
 
 
