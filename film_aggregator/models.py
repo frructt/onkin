@@ -1,9 +1,8 @@
 import flask_file_upload
 
-from film_aggregator import db, login_manager
+from film_aggregator import db, login_manager, file_upload
 from flask_login import UserMixin
 from sqlalchemy.dialects.postgresql import UUID
-from flask_file_upload import file_upload
 
 
 @login_manager.user_loader
@@ -38,12 +37,12 @@ class UploadedFile(db.Model):
     fileContent = db.Column(db.LargeBinary, nullable=False)
 
 
-@file_upload.create_model
+@file_upload.Model
 class DemoFileStreamTable1(db.Model):
     __tablename__ = "demoTable"
     id = db.Column(db.Integer, primary_key=True)
-    filename = db.Column(db.String(200), nullable=False)
-    file = file_upload.Column()
+    # filename = db.Column(db.String(200), nullable=False)
+    my_file = file_upload.Column()
 
 
 # class ImdbBasicName(db.Model):
