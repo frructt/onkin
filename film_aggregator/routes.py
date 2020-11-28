@@ -39,7 +39,7 @@ def watch_video():
 
 
 @app.route('/uploads/<filename>')
-def upload(filename):
+def uploads(filename):
     file = DemoFileStreamTable1.query.filter_by(my_file__file_name=filename).first()
     return file_upload.stream_file(file, filename="my_file")
 
@@ -100,15 +100,15 @@ def account():
 def upload_file():
     if request.method == "POST":
         file = request.files["upload"]
-        new_file = DemoFileStreamTable1()
+        model_instance = DemoFileStreamTable1()
         videos = DemoFileStreamTable1.query.all()
         if videos:
-            new_file.id = videos[-1].id + 1
-            new_file.name = file.filename
+            model_instance.id = videos[-1].id + 1
+            model_instance.name = file.filename
         else:
-            new_file.id = 1
-            new_file.name = file.filename
-        file_upload.update_files(new_file,
+            model_instance.id = 1
+            model_instance.name = file.filename
+        file_upload.update_files(model_instance,
                                  files={
                                      "my_file": file
                                  })
