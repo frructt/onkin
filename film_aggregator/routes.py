@@ -1,27 +1,10 @@
 from flask import render_template, url_for, flash, redirect, request, send_from_directory
 from film_aggregator.forms import RegistrationForm, LoginForm
-from film_aggregator import app, db, bcrypt, file_upload
+from film_aggregator import app, db, bcrypt, file_upload, socketio
 from film_aggregator.models import User, Film, UploadedFile, DemoFileStreamTable1
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_socketio import send, emit
 import base64
-
-# films = [
-#     {
-#         "name": "name1",
-#         "genre": "genre1",
-#         "year": 2005
-#     },
-#     {
-#         "name": "name2",
-#         "genre": "genre2",
-#         "year": 2006
-#     },
-#     {
-#         "name": "name3",
-#         "genre": "genre3",
-#         "year": 2005
-#     }
-# ]
 
 
 @app.route("/")
@@ -36,6 +19,13 @@ def home():
 def watch_video():
     video_list = DemoFileStreamTable1.query.all()
     return render_template("watch_video.html", video_list=video_list)
+
+
+@socketio.on('message')
+def message(data):
+    print(f"\n\n{data}\n\n")
+    send(data)
+    emit("some event", "this is a custom event message")
 
 
 @app.route('/uploads/<filename>')
