@@ -35,9 +35,9 @@ def play_video(onplay):
 
 
 @socketio.on('pause-video')
-def play_video(event):
-    print(f"\n\n{event}\n\n")
-    emit("onpause event", {"onpause": event}, broadcast=True)
+def pause_video(onpause):
+    print(f"\n\n{onpause}\n\n")
+    emit("onpause event", {"onpause": onpause}, broadcast=True)
 
 
 @app.route('/uploads/<filename>')
