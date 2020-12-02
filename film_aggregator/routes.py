@@ -28,10 +28,16 @@ def message(data):
     emit("some event", "this is a custom event message")
 
 
-@socketio.on('play_video')
-def play_video(data):
-    send(data)
-    emit("play video event", "this is a custom video event message")
+@socketio.on('play-video')
+def play_video(onplay):
+    print(f"\n\n{onplay}\n\n")
+    emit("onplay event", {"onplay": onplay}, broadcast=True)
+
+
+@socketio.on('pause-video')
+def play_video(event):
+    print(f"\n\n{event}\n\n")
+    emit("onpause event", {"onpause": event}, broadcast=True)
 
 
 @app.route('/uploads/<filename>')

@@ -12,37 +12,28 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(data);
     });
 
-    // var vid = document.getElementById("videoId");
-    // function myFunction() {
-    //     alert(vid.paused);
-    // }
+    var video = document.getElementById("videoId")
+    video.onplay = video => {
+        console.log("video is playing");
+        socket.emit("play-video", true);
+    };
 
-
-
-    document.getElementById("videoId").onplay = () => {
-        socket.send(document.getElementById("videoId").onpause)
-    }
-
-    socket.on('play_video', (data) => {
-        if (!data) {
-            document.getElementById("videoId").play();
-        } else {
-            document.getElementById("videoId").pause();
+    socket.on('onplay event', onplay => {
+        // console.log("got video element!");
+        if (onplay["onplay"]) {
+            document.getElementById("videoId").play()
         }
-        console.log(data);
-            // document.getElementById("videoId").play();
     });
 
-    // socket.on('play video event', () => {
-    //     document.getElementById("videoId").play();
-    // });
+    var video = document.getElementById("videoId")
+    video.onpause = () => {
+        console.log("video is paused");
+        socket.emit("pause-video", true);
+    };
 
-    // socket.on('play_video', data => {
-    //     var vid = document.getElementById("videoId");
-    //     socket.send("Got it");
-    //     vid.onplay = function() {
-    //         socket.send("The video has started to play");
-    //         console.log(`The video has started to play: ${data}`);
-    //     };
-    // })
+    socket.on('onpause event', onpause => {
+        if (onpause["onpause"]) {
+            document.getElementById("videoId").pause()
+        }
+    });
 })
