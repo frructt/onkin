@@ -28,6 +28,12 @@ def message(data):
     emit("some event", "this is a custom event message")
 
 
+@socketio.on('play_video')
+def play_video(data):
+    send(data)
+    emit("play video event", "this is a custom video event message")
+
+
 @app.route('/uploads/<filename>')
 def uploads(filename):
     file = DemoFileStreamTable1.query.filter_by(my_file__file_name=filename).first()
