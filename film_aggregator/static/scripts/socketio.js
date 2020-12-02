@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     var video = document.getElementById("videoId")
-    video.onplay = video => {
+    video.onplay = () => {
         console.log("video is playing");
         socket.emit("play-video", true);
     };
