@@ -1,9 +1,10 @@
 from flask import render_template, url_for, flash, redirect, request, send_from_directory
 from film_aggregator.forms import RegistrationForm, LoginForm
-from film_aggregator import app, db, bcrypt, file_upload, socketio
+from film_aggregator import app, db, bcrypt, file_upload, socketio, ROOMS
 from film_aggregator.models import User, Film, UploadedFile, DemoFileStreamTable1
 from flask_login import login_user, current_user, logout_user, login_required
-from flask_socketio import send, emit
+from flask_socketio import send, emit, join_room, leave_room
+from time import localtime, strftime
 import base64
 
 
@@ -18,14 +19,27 @@ def home():
 @app.route("/watch_video")
 def watch_video():
     video_list = DemoFileStreamTable1.query.all()
-    return render_template("watch_video.html", video_list=video_list)
+    return render_template("watch_video.html", video_list=video_list, rooms=ROOMS)
 
 
 @socketio.on('message')
 def message(data):
     print(f"\n\n{data}\n\n")
-    send(data)
-    emit("some event", "this is a custom event message")
+    send({"msg": data["msg"], "username": data["username"], "time_stamp": strftime("%b-%d %I:%M%p", localtime())}, room=data["room"])
+
+
+@socketio.on("join")
+def join(data):
+    join_room(data["room"])
+    msg_value = "{0} has joined the {1} room".format(data["username"], data["room"])
+    send({"msg": msg_value}, room=data["room"])
+
+
+@socketio.on("leave")
+def leave(data):
+    leave_room(data["room"])
+    msg_value = "{0} has left the {1} room".format(data["username"], data["room"])
+    send({"msg": msg_value}, room=data["room"])
 
 
 @socketio.on('play-video')
@@ -38,6 +52,12 @@ def play_video(onplay):
 def pause_video(onpause):
     print(f"\n\n{onpause}\n\n")
     emit("onpause event", {"onpause": onpause}, broadcast=True)
+
+
+@socketio.on('change-video-position')
+def change_video_position(current_position):
+    print(f"\n{current_position}\n")
+    emit("change video position event", {"current_position": current_position}, broadcast=True)
 
 
 @app.route('/uploads/<filename>')
