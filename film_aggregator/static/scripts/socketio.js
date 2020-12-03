@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     var socket = io.connect('http://' + document.domain + ':' + location.port);
+    var video = document.getElementById("videoId")
 
     let room = "room1";
     joinRoom("room1");
@@ -65,47 +66,42 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#display-message-section').append(p);
     }
 
-    var video = document.getElementById("videoId")
-
+    // Play video
     video.onplay = () => {
         console.log("video is playing");
-        socket.emit("play-video", true);
+        socket.emit("play-video", {"username": username, "room": room});
     };
 
-    socket.on('onplay event', onplay => {
-        console.log("got onplay event!");
-        if (onplay["onplay"]) {
-//            document.getElementById("videoId").play();
+    socket.on('onplay event', data => {
+        if (data["username"] != username && data["room"] === room) {
             video.play();
-        }
+        } else {}
 
     });
 
-//    var video = document.getElementById("videoId")
+    // Pause video
     video.onpause = () => {
         console.log("video is paused");
-        socket.emit("pause-video", true);
+        socket.emit("pause-video", {"username": username, "room": room});
     };
 
-    socket.on('onpause event', onpause => {
-        console.log("got onpause event!");
-        if (onpause["onpause"]) {
-//            document.getElementById("videoId").pause();
+    socket.on('onpause event', data => {
+        if (data["username"] != username && data["room"] === room) {
             video.pause();
         }
     });
 
-//    var video = document.getElementById("videoId")
-    video.ontimeupdate = () => {
-        var current_position = video.currentTime;
-        socket.emit("change-video-position", current_position);
+    // Change video position
+    video.onseeked = () => {
+        console.log(video.currentTime);
+        socket.emit("change-video-position", {"current_position": video.currentTime, "username": username, "room": room});
     };
 
-    socket.on('change video position event', current_position => {
-        console.log("got change video position event!");
-//        var video = document.getElementById("videoId")
-        if (video.currentTime != current_position["current_position"]) {
-            video.currentTime = current_position["current_position"];
+    socket.on('change video position event', data => {
+        console.log("difference in positions (sec): " + Math.abs((data["current_position"] - video.currentTime)))
+        if ((video.currentTime != data["current_position"]) && (Math.abs((data["current_position"] - video.currentTime)) > 0.5) && data["username"] != username && data["room"] === room) {
+            console.log("video.currentTime: " + video.currentTime + " current_position: " + data["current_position"]);
+            video.currentTime = data["current_position"];
         }
         else {
             console.log("position in the same");
