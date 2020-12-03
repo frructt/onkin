@@ -43,21 +43,22 @@ def leave(data):
 
 
 @socketio.on('play-video')
-def play_video(onplay):
-    print(f"\n\n{onplay}\n\n")
-    emit("onplay event", {"onplay": onplay}, broadcast=True)
+def play_video(data):
+    print(f"\n\n{data}\n\n")
+    emit("onplay event", {"username": data["username"], "room": data["room"]}, broadcast=True)
 
 
 @socketio.on('pause-video')
-def pause_video(onpause):
-    print(f"\n\n{onpause}\n\n")
-    emit("onpause event", {"onpause": onpause}, broadcast=True)
+def pause_video(data):
+    print(f"\n\n{data}\n\n")
+    emit("onpause event", {"username": data["username"], "room": data["room"]}, broadcast=True)
 
 
 @socketio.on('change-video-position')
-def change_video_position(current_position):
-    print(f"\n{current_position}\n")
-    emit("change video position event", {"current_position": current_position}, broadcast=True)
+def change_video_position(data):
+    emit("change video position event",
+         {"current_position": data["current_position"], "username": data["username"], "room": data["room"]},
+         broadcast=True)
 
 
 @app.route('/uploads/<filename>')
