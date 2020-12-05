@@ -8,10 +8,11 @@ from flask_login import LoginManager
 from flask_socketio import SocketIO
 
 app = Flask(__name__)
+app.config["SESSION_TYPE"] = "filesystem"
 app.config["SECRET_KEY"] = '7104ba209f0cf2e63b28982f7b8782e8'
 app.config["SQLALCHEMY_DATABASE_URI"] = "mssql+pyodbc://admin:12345@83.167.115.245/TestFileStream?driver=SQL Server?Trusted_Connection=yes"
 db = SQLAlchemy(app)
-socketio = SocketIO(app)
+socketio = SocketIO(app, manage_session=False)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
