@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     var socket = io.connect('http://' + document.domain + ':' + location.port);
-    var video = document.getElementById("videoId")
+    var video = document.getElementById("videoId");
+    var isPlaying = true;
 
+    let other_username = username
     let room = "room1";
     joinRoom("room1");
 
@@ -66,30 +68,70 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#display-message-section').append(p);
     }
 
-    // Play video
+    // Play video function
+    function playVid() {
+        if (video.paused && !isPlaying) {
+            console.log("start playing for user " + username);
+            video.play();
+        } else {
+            console.log("video is already played for user " + username);
+        }
+    }
+
+    // Pause video function
+    function pauseVid() {
+        if (!video.paused && isPlaying) {
+            console.log("start stopping for user " + username);
+            video.pause();
+        } else {
+            console.log("video is already stopped for user " + username);
+        }
+    }
+
+    // On video playing toggle values
     video.onplay = () => {
-        console.log("video is playing");
-        socket.emit("play-video", {"username": username, "room": room});
-    };
+        isPlaying = true;
+        if (other_username === username){
+            console.log("video is playing from user " + username);
+            socket.emit("play-video", {"username": username, "room": room});
+        } else {
+            console.log(" " + other_username + " != " + username);
+            other_username = username;
+        }
+    }
+
+    // On video pause toggle values
+    video.onpause = () => {
+        isPlaying = false;
+        if (other_username === username){
+            console.log("video is paused by user " + username);
+            socket.emit("pause-video", {"username": username, "room": room});
+        } else {
+            console.log(" " + other_username + " != " + username);
+            other_username = username;
+        }
+    }
 
     socket.on('onplay event', data => {
-        if (data["username"] != username && data["room"] === room) {
-            video.play();
-        } else {}
-
-    });
-
-    // Pause video
-    video.onpause = () => {
-        console.log("video is paused");
-        socket.emit("pause-video", {"username": username, "room": room});
-    };
-
-    socket.on('onpause event', data => {
-        if (data["username"] != username && data["room"] === room) {
-            video.pause();
+        if (data["room"] === room) {
+            other_username = data["username"]
+            playVid();
         }
     });
+
+    socket.on('onpause event', data => {
+        if (data["room"] === room) {
+            other_username = data["username"]
+            pauseVid();
+        }
+    });
+
+//
+//    // Stop video playing
+//    video.onseeking = () => {
+//        console.log("seeking has begun!");
+//        socket.emit("pause-video", {"username": username, "room": room});
+//    };
 
     // Change video position
     video.onseeked = () => {
@@ -102,9 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((video.currentTime != data["current_position"]) && (Math.abs((data["current_position"] - video.currentTime)) > 0.5) && data["username"] != username && data["room"] === room) {
             console.log("video.currentTime: " + video.currentTime + " current_position: " + data["current_position"]);
             video.currentTime = data["current_position"];
+            //pauseVid();
         }
         else {
             console.log("position in the same");
+            //pauseVid();
         }
     })
 })
