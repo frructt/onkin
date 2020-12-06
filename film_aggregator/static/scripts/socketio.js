@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     var socket = io.connect('http://' + document.domain + ':' + location.port);
     var video = document.getElementById("videoId");
-    var isPlaying = true;
+    var isPlaying = false;
 
     let other_username = username
     let room = "room1";
@@ -104,8 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
     video.onpause = () => {
         isPlaying = false;
         if (other_username === username){
-            console.log("video is paused by user " + username);
-            socket.emit("pause-video", {"username": username, "room": room});
+            if (!video.seeking) {  // if seeking don't send pause event to server
+                console.log("video is paused by user " + username);
+                socket.emit("pause-video", {"username": username, "room": room});
+            }
         } else {
             console.log(" " + other_username + " != " + username);
             other_username = username;
@@ -126,29 +128,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-//
-//    // Stop video playing
-//    video.onseeking = () => {
-//        console.log("seeking has begun!");
-//        socket.emit("pause-video", {"username": username, "room": room});
-//    };
-
     // Change video position
     video.onseeked = () => {
-        console.log(video.currentTime);
-        socket.emit("change-video-position", {"current_position": video.currentTime, "username": username, "room": room});
+        if (other_username === username){
+            console.log(video.currentTime);
+            socket.emit("change-video-position", {"current_position": video.currentTime, "username": username, "room": room});
+        } else {
+            console.log(" " + other_username + " != " + username);
+            other_username = username;
+        }
     };
 
     socket.on('change video position event', data => {
         console.log("difference in positions (sec): " + Math.abs((data["current_position"] - video.currentTime)))
-        if ((video.currentTime != data["current_position"]) && (Math.abs((data["current_position"] - video.currentTime)) > 0.5) && data["username"] != username && data["room"] === room) {
+        if ((video.currentTime != data["current_position"]) && data["username"] != username && data["room"] === room) {
+            other_username = data["username"];
             console.log("video.currentTime: " + video.currentTime + " current_position: " + data["current_position"]);
             video.currentTime = data["current_position"];
-            //pauseVid();
         }
         else {
+            other_username = data["username"];
             console.log("position in the same");
-            //pauseVid();
         }
     })
 })
