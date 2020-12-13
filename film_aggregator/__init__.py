@@ -18,7 +18,7 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.login_message_category = "info"
 
-ROOMS = ["room1", "room2", "room3"]
+ROOMS = ["Room1", "Room2", "Room3"]
 
 # Environment variables
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

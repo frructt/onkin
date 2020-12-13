@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     var isPlaying = false;
 
     let other_username = username
-    let room = "room1";
-    joinRoom("room1");
+    let room = "Room1";
+    joinRoom("Room1");
 
     // Display incoming messages
     socket.on('message', data => {
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.select-room').forEach(p => {
         p.onclick = () => {
             let newRoom = p.innerHTML;
-            if (newRoom == room) {
+            if (newRoom === room) {
                 msg = `You are already in ${room} room.`
                 printSysMsg(msg);
             } else {
