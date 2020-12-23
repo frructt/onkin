@@ -1,6 +1,6 @@
 import flask_file_upload
 
-from film_aggregator import db, login_manager, file_upload
+from server import db, login_manager, file_upload
 from flask_login import UserMixin
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -13,12 +13,22 @@ def load_user(user_id):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default="default.jpg")
     password = db.Column(db.String(60), nullable=False)
 
-    def __ref__(self):
-        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+    def to_json(self):
+        return {"username": self.username}
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return str(self.id)
 
 
 class Film(db.Model):

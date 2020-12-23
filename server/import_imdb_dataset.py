@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import requests
 
-from film_aggregator import db
+from server import db
 
 
 name_basic_url = "https://datasets.imdbws.com/name.basics.tsv.gz"
@@ -95,7 +95,7 @@ def run_db_imports():
     headers_list = [name_basics_headers, akas_headers, crew_headers, episode_headers,
                     raitings_headers, title_basics_headers]
     dtypes_list = [name_basics_dtypes, akas_dtypes, crew_dtypes, episode_dtypes, raitings_dtypes, title_basics_dtypes]
-    filepath = "C:\\Users\\GORNOSTAEVKK\\PycharmProjects\\onkin\\film_aggregator\\imdb"
+    filepath = "/server\\imdb"
     for fn, h, dt, bn in zip(file_names, headers_list, dtypes_list, db_names):
         dataset_file = "{}/{}.tsv".format(filepath, fn)
         import_dataset(dataset_file, h, dt, bn)
