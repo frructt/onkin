@@ -1,30 +1,17 @@
 import functools
 
-from flask import render_template, url_for, flash, redirect, request, send_from_directory
-from film_aggregator.forms import RegistrationForm, LoginForm
-from film_aggregator import app, db, bcrypt, file_upload, socketio, ROOMS
-from film_aggregator.models import User, Film, UploadedFile, DemoFileStreamTable1
+from flask import render_template, url_for, flash, redirect, request, send_from_directory, jsonify, session
+# from server.forms import RegistrationForm, LoginForm
+from server import app, db, bcrypt, file_upload, socketio, ROOMS
+from server.models import User, Film, UploadedFile, DemoFileStreamTable1
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_socketio import send, emit, join_room, leave_room, disconnect
 from time import strftime
 from datetime import datetime
+from flask_restful import Resource
+
+
 import base64
-
-
-@app.route("/")
-@app.route("/home")
-@login_required
-def home():
-    files = DemoFileStreamTable1.query.first()
-    # image = base64.b64encode(files[0].fileContent).decode("utf-8")
-    return render_template("home.html", films=[files.my_file__file_name])
-
-
-@app.route("/watch_video")
-@login_required
-def watch_video():
-    video_list = DemoFileStreamTable1.query.all()
-    return render_template("watch_video.html", video_list=video_list, rooms=ROOMS)
 
 
 # decorator
@@ -36,6 +23,26 @@ def authenticated_only(f):
         else:
             return f(*args, **kwargs)
     return wrapped
+
+
+@app.route("/")
+@app.route("/home")
+@login_required
+def home():
+    return jsonify({"result": True})
+
+
+@app.route("/users", methods=["GET"])
+def users():
+    users_ = User.query.all()
+    return jsonify([{"username": user.username} for user in users_])
+
+
+@app.route("/watch_video")
+@login_required
+def watch_video():
+    video_list = DemoFileStreamTable1.query.all()
+    return render_template("watch_video.html", video_list=video_list, rooms=ROOMS)
 
 
 @socketio.on('message')
@@ -97,45 +104,42 @@ def about():
     return render_template("about.html", title="About")
 
 
-@app.route("/register", methods=["GET", "POST"])
+@app.route('/register', methods=["POST"])
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for("home"))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+    json_data = request.json
+    user = User(
+        username=json_data["username"],
+        password=json_data["password"]
+    )
+    try:
         db.session.add(user)
         db.session.commit()
-        flash("Your account has been created! Now you can log in", "success")
-        return redirect(url_for("login"))
-
-    return render_template("register.html", title="Register", form=form)
+        status = "success"
+    except:
+        status = "this user is already registered"
+    db.session.close()
+    return jsonify({"result": status})
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for("home"))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get("next")
-            if next_page:
-                return redirect(next_page)
-            else:
-                return redirect(url_for("home"))
-        else:
-            flash("Login Unsuccessful. Please check email and password", "danger")
-    return render_template("login.html", title="Login", form=form)
+    json_data = request.json
+    user = User.query.filter_by(username=json_data["username"]).first()
+    if user and bcrypt.check_password_hash(
+            user.password, json_data["password"]):
+        login_user(user)
+        # session['logged_in'] = True
+        return jsonify(user.to_json())
+    else:
+        return jsonify({"status": 401,
+                        "reason": "Username or Password Error"})
 
 
-@app.route("/logout")
+@app.route("/logout", methods=["POST"])
 def logout():
     logout_user()
-    return redirect(url_for("login"))
+    return jsonify(**{"result": 200,
+                      "data": {"message": "logout success"}})
 
 
 @app.route("/account")

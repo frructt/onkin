@@ -6,11 +6,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_socketio import SocketIO
+from flask_restful import Resource, Api
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SECRET_KEY"] = '7104ba209f0cf2e63b28982f7b8782e8'
 app.config["SQLALCHEMY_DATABASE_URI"] = "mssql+pyodbc://admin:12345@83.167.115.245/TestFileStream?driver=SQL Server?Trusted_Connection=yes"
+api = Api(app)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 db = SQLAlchemy(app)
 socketio = SocketIO(app, manage_session=False)
 bcrypt = Bcrypt(app)
@@ -47,5 +51,5 @@ def create_app():
     file_upload.init_app(app, db)
 
 
-from film_aggregator import routes  # , import_imdb_dataset
+from server import routes  # , import_imdb_dataset
 # import_imdb_dataset.run_db_imports()
