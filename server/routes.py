@@ -1,13 +1,15 @@
 import functools
+import jwt
 
-from flask import render_template, url_for, flash, redirect, request, send_from_directory, jsonify, session
+from flask import render_template, url_for, flash, redirect, request, send_from_directory, jsonify, session, \
+    make_response
 # from server.forms import RegistrationForm, LoginForm
 from server import app, db, bcrypt, file_upload, socketio, ROOMS
 from server.models import User, Film, UploadedFile, DemoFileStreamTable1
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_socketio import send, emit, join_room, leave_room, disconnect
 from time import strftime
-from datetime import datetime
+import datetime
 from flask_restful import Resource
 
 
@@ -25,6 +27,35 @@ def authenticated_only(f):
     return wrapped
 
 
+# decorator for verifying the JWT
+def token_required(f):
+    @functools.wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        # jwt is passed in the request header
+        if "HTTP_AUTHORIZATION" in request.headers.environ.keys():
+            token = request.headers.environ["HTTP_AUTHORIZATION"][7:]
+            # return 401 if token is not passed
+        # return 401 if token is not passed
+        if not token:
+            return jsonify({"error": "unauthorized",
+                            "errorMessage": "Authorization has been denied for this request."}), 401
+
+        try:
+            # decoding the payload to fetch the stored details
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = User.query.filter_by(username=data["user"]).first()
+            if not current_user:
+                return jsonify({"error": "unauthorized",
+                                "errorMessage": 'Token is invalid.'}), 401
+        except:
+            return jsonify({"error": "unauthorized",
+                            "errorMessage": 'Token is invalid.'}), 401
+        return f(*args, **kwargs)
+
+    return decorated
+
+
 @app.route("/")
 @app.route("/home")
 @login_required
@@ -32,7 +63,8 @@ def home():
     return jsonify({"result": True})
 
 
-@app.route("/users", methods=["GET"])
+@app.route("/api/users", methods=["GET"])
+@token_required
 def users():
     users_ = User.query.all()
     return jsonify([{"username": user.username} for user in users_])
@@ -49,7 +81,7 @@ def watch_video():
 @authenticated_only
 def message(data):
     print(f"\n\n{data}\n\n")
-    send({"msg": data["msg"], "username": data["username"], "time_stamp": datetime.now().strftime("%b-%d %H:%M%S.%f")},
+    send({"msg": data["msg"], "username": data["username"], "time_stamp": datetime.datetime.now().strftime("%b-%d %H:%M%S.%f")},
          room=data["room"])
 
 
@@ -121,21 +153,23 @@ def register():
     return jsonify({"result": status})
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/api/login", methods=["GET", "POST"])
 def login():
     json_data = request.json
     user = User.query.filter_by(username=json_data["username"]).first()
     if user and bcrypt.check_password_hash(
             user.password, json_data["password"]):
-        login_user(user)
+        # login_user(user)
         # session['logged_in'] = True
-        return jsonify(user.to_json())
+        token = jwt.encode({"user": user.username,
+                            "exp": datetime.datetime.utcnow() + datetime.timedelta(days=1)},
+                           app.config["SECRET_KEY"])
+        return jsonify({"token": token, "user": user.username})
     else:
-        return jsonify({"status": 401,
-                        "reason": "Username or Password Error"})
+        return make_response("Could not verify!", 401, {"WWW-Authenticate": "Basic realm: Login Required"})
 
 
-@app.route("/logout", methods=["POST"])
+@app.route("/api/logout", methods=["POST"])
 def logout():
     logout_user()
     return jsonify(**{"result": 200,
