@@ -62,11 +62,13 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular-8-basic-authentication-example:build"
-          },
+                "browserTarget": "angular-8-basic-authentication-example:build",
+                "proxyConfig": "src/proxy.conf.json"
+            },
           "configurations": {
             "production": {
-              "browserTarget": "angular-8-basic-authentication-example:build:production"
+              "browserTarget": "angular-8-basic-authentication-example:build:production",
+              "proxyConfig": "src/proxy.conf.json"
             }
           }
         },
