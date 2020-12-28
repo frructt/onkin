@@ -1,22 +1,45 @@
-﻿import { Component } from '@angular/core';
-import { first } from 'rxjs/operators';
+﻿import {Component, OnInit} from '@angular/core';
+import {AuthenticationService, UserService} from '@app/_services';
+import {Router} from '@angular/router';
 
-import { User } from '@app/_models';
-import { UserService } from '@app/_services';
+@Component({ templateUrl: 'home.component.html' ,
+             styleUrls: ['home.component.scss']
+})
+export class HomeComponent implements OnInit {
+    submitted = false;
 
-@Component({ templateUrl: 'home.component.html' })
-export class HomeComponent {
-    loading = false;
-    users: User[];
+    constructor(private userService: UserService,
+                private authenticationService: AuthenticationService,
+                private router: Router) { }
 
-    constructor(private userService: UserService) { }
-
-  // tslint:disable-next-line:use-lifecycle-interface
     ngOnInit() {
-        this.loading = true;
-        this.userService.getAllUsers().pipe(first()).subscribe(users => {
-            this.loading = false;
-            this.users = users;
-        });
+    }
+
+    onCreateRoomSubmit() {
+      this.submitted = true;
+
+      const currentUser = this.authenticationService.currentUserValue;
+      if (currentUser) {
+          this.router.navigate(['/mocked']);
+          return true;
+      }
+
+      // not logged in so redirect to login page
+      this.router.navigate(['/login']);
+      return false;
+    }
+
+    onWatchVideoSubmit() {
+      this.submitted = true;
+
+      const currentUser = this.authenticationService.currentUserValue;
+      if (currentUser) {
+        this.router.navigate(['/mocked']);
+        return true;
+      }
+
+      // not logged in so redirect to login page
+      this.router.navigate(['/login']);
+      return false;
     }
 }
