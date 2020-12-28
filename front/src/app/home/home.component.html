@@ -1,10 +1,13 @@
-﻿<div class="card mt-4">
-    <h4 class="card-header">You're logged in with Angular 8 & Basic HTTP Authentication!!</h4>
-    <div class="card-body">
-        <h6>Users from secure api end point</h6>
-        <div *ngIf="loading" class="spinner-border spinner-border-sm"></div>
-        <ul *ngIf="users">
-            <li *ngFor="let user of users">{{user.username}}</li>
-        </ul>
+﻿<div class="col-md-10 mall cheight home-container" style="background-color: #c4c4c4">
+  <div class="home-sub-container">
+    <h1 class="text-uppercase">PROJECT NAME</h1>
+    <div class="home-body">
+      <button (click)="onCreateRoomSubmit()" class="home-btn home-btn-border-form text-uppercase">
+        Create room
+      </button>
+      <button (click)="onWatchVideoSubmit()" class="home-btn home-btn-border-form text-uppercase">
+        Watch video
+      </button>
     </div>
+  </div>
 </div>
