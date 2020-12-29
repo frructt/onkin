@@ -7,9 +7,9 @@ import { AuthGuard } from './_helpers';
 import { MockedComponent } from './mocked';
 
 const routes: Routes = [
-    { path: '', component: HomeComponent, canActivate: [AuthGuard] },
+    { path: '', component: HomeComponent },
     { path: 'login', component: LoginComponent },
-    { path: 'mocked', component: MockedComponent },
+    { path: 'mocked', component: MockedComponent, canActivate: [AuthGuard]},
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' }
