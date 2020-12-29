@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
       }
 
       // not logged in so redirect to login page
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/mocked' } });
       return false;
     }
 
@@ -39,7 +39,7 @@ export class HomeComponent implements OnInit {
       }
 
       // not logged in so redirect to login page
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/mocked' } });
       return false;
     }
 }
