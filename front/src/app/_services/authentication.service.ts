@@ -32,9 +32,10 @@ export class AuthenticationService {
     }
 
     logout() {
+        const currentUser = this.currentUserValue.username;
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
-        return this.http.post<any>(`${environment.apiUrl}/logout`, {}).subscribe();
+        return this.http.post<any>(`${environment.apiUrl}/logout`, {username:  currentUser}).subscribe();
     }
 }

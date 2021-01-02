@@ -1,4 +1,5 @@
 import flask_file_upload
+from sqlalchemy.exc import SQLAlchemyError
 
 from server import db, login_manager, file_upload
 from flask_login import UserMixin
@@ -29,6 +30,24 @@ class User(db.Model, UserMixin):
 
     def get_id(self):
         return str(self.id)
+
+    @staticmethod
+    def delete_user(username):
+        try:
+            User.query.filter_by(username=username).delete()
+            db.session.commit()
+            db.session.close()
+        except SQLAlchemyError as e:
+            error = str(e.__dict__['orig'])
+            print(error)
+
+    @staticmethod
+    def get_user(username):
+        try:
+            return User.query.filter_by(username=username).first()
+        except SQLAlchemyError as e:
+            error = str(e.__dict__['orig'])
+            print(error)
 
 
 class Film(db.Model):
