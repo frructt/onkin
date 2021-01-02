@@ -7,8 +7,8 @@
 
   .mall {
     margin-top: 10rem !important;
-    margin-left: 15%;
-    margin-right: 20%;
+    margin-left: 20%;
+    margin-right: 15%;
     margin-bottom: 20%;
   }
 
@@ -17,15 +17,23 @@
 
   h1 {
     //font-family: DXRigraf-SemiBold, serif;
+    //font-size: 4rem;
+    padding: 0.3em 0 0.2em 0;
     font-size: 4rem;
-    line-height: 117px;
   }
 
   .login-container {
+    background-color: #E5E5E5;
     font-family: DXRigraf-SemiBold, serif;
+
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+
+    width: 50em;
+    height: 25em;
+
+    border-radius: 20px;
 
     padding-left: 4%;
   }
@@ -68,8 +76,12 @@
 
   .login-btn {
     font-size: 1.5rem;
+
     height: 2em;
     width: 10rem;
+
+    margin-top: 1em;
+
     color: #000000;
     background-color: #ffffff;
     border-color: #000000;
@@ -83,12 +95,16 @@
   }
 
   .login-btn:focus {
-  outline: 0;
-  box-shadow: 0 0 0 0.1rem #000000;
+    color: #E5E5E5;
+    background-color: #000000;
+
+    //outline: 0;
+    //box-shadow: 0 0 0 0.1rem #000000;
   }
 
   .login-btn:hover {
-    color: #ffffff;
-    background-color: #333333;
+    background-color: #d7d7d7;
+    //color: #ffffff;
+    //background-color: #333333;
   }
 }
