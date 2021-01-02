@@ -1,19 +1,15 @@
-import functools
-import jwt
-
-from flask import render_template, url_for, flash, redirect, request, send_from_directory, jsonify, session, \
-    make_response
-# from server.forms import RegistrationForm, LoginForm
-from server import app, db, bcrypt, file_upload, socketio, ROOMS
-from server.models import User, Film, UploadedFile, DemoFileStreamTable1
-from flask_login import login_user, current_user, logout_user, login_required
-from flask_socketio import send, emit, join_room, leave_room, disconnect
-from time import strftime
 import datetime
-from flask_restful import Resource
+import functools
 
+import jwt
+from flask import render_template, url_for, flash, redirect, request, jsonify, make_response
+from flask_login import current_user, logout_user, login_required
+from flask_socketio import send, emit, join_room, leave_room, disconnect
+# from server.forms import RegistrationForm, LoginForm
+from sqlalchemy.exc import SQLAlchemyError
 
-import base64
+from server import app, db, file_upload, socketio, ROOMS
+from server.models import User, DemoFileStreamTable1
 
 
 # decorator
@@ -35,7 +31,6 @@ def token_required(f):
         # jwt is passed in the request header
         if "HTTP_AUTHORIZATION" in request.headers.environ.keys():
             token = request.headers.environ["HTTP_AUTHORIZATION"][7:]
-            # return 401 if token is not passed
         # return 401 if token is not passed
         if not token:
             return jsonify({"error": "unauthorized",
@@ -44,10 +39,10 @@ def token_required(f):
         try:
             # decoding the payload to fetch the stored details
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = User.query.filter_by(username=data["user"]).first()
+            current_user = User.query.filter_by(username=data["username"]).first()
             if not current_user:
                 return jsonify({"error": "unauthorized",
-                                "errorMessage": 'Token is invalid.'}), 401
+                                "errorMessage": 'Token is invalid or user is not found.'}), 401
         except:
             return jsonify({"error": "unauthorized",
                             "errorMessage": 'Token is invalid.'}), 401
@@ -136,50 +131,44 @@ def about():
     return render_template("about.html", title="About")
 
 
-@app.route('/register', methods=["POST"])
-def register():
-    json_data = request.json
-    user = User(
-        username=json_data["username"],
-        password=json_data["password"]
-    )
-    try:
-        db.session.add(user)
-        db.session.commit()
-        status = "success"
-    except:
-        status = "this user is already registered"
-    db.session.close()
-    return jsonify({"result": status})
-
-
-@app.route("/api/login", methods=["GET", "POST"])
+@app.route("/api/login", methods=["POST"])
 def login():
     json_data = request.json
     user = User.query.filter_by(username=json_data["username"]).first()
-    if user and bcrypt.check_password_hash(
-            user.password, json_data["password"]):
-        # login_user(user)
-        # session['logged_in'] = True
-        token = jwt.encode({"user": user.username,
-                            "exp": datetime.datetime.utcnow() + datetime.timedelta(days=1)},
-                           app.config["SECRET_KEY"])
-        return jsonify({"token": token, "user": user.username})
+    if user:
+        return make_response({"message": "Login is already exist"}, 401)
+    # create new user
     else:
-        return make_response("Could not verify!", 401, {"WWW-Authenticate": "Basic realm: Login Required"})
+        user = User(
+            username=json_data["username"],
+            password=json_data["password"]
+        )
+        try:
+            # add new user to db
+            db.session.add(user)
+            db.session.commit()
+            status = True
+        except SQLAlchemyError as e:
+            db.session.close()
+            error = str(e.__dict__['orig'])
+            return make_response({"message": error}, 498)
+        try:
+            token = jwt.encode({"username": user.username,
+                                "exp": datetime.datetime.utcnow() + datetime.timedelta(days=1)},
+                               app.config["SECRET_KEY"])
+            db.session.close()
+            return jsonify({"token": token, "username": user.username})
+        except:
+            user.delete_user(json_data["username"])
+            return make_response({"message": "Cannot create token"}, 498)
 
 
 @app.route("/api/logout", methods=["POST"])
 def logout():
     logout_user()
-    return jsonify(**{"result": 200,
-                      "data": {"message": "logout success"}})
-
-
-@app.route("/account")
-@login_required
-def account():
-    return render_template("account.html", title="Account")
+    json_data = request.json
+    User.delete_user(json_data["username"])
+    return make_response(jsonify({}), 204)
 
 
 @app.route("/upload", methods=["GET", "POST"])
