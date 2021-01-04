@@ -16,7 +16,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "mssql+pyodbc://admin:12345@83.167.115.2
 api = Api(app)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 db = SQLAlchemy(app)
-socketio = SocketIO(app, manage_session=False)
+socketio = SocketIO(app, manage_session=False, cors_allowed_origins='*')
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"

@@ -51,6 +51,11 @@ def token_required(f):
     return decorated
 
 
+@socketio.on('connect', namespace='/test')
+def test_connect():
+    print('Client connected')
+
+
 @app.route("/")
 @app.route("/home")
 @login_required
@@ -73,7 +78,7 @@ def watch_video():
 
 
 @socketio.on('message')
-@authenticated_only
+@token_required
 def message(data):
     print(f"\n\n{data}\n\n")
     send({"msg": data["msg"], "username": data["username"], "time_stamp": datetime.datetime.now().strftime("%b-%d %H:%M%S.%f")},
