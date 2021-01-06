@@ -1,50 +1,5 @@
-<div class="main-container">
-  <div class="video-container">
-
-      <h2>VIDEO</h2>
-      <div class="player-container">
-        <video id="videoId" width="400" height="300" controls="controls">
-<!--						<source src="{{ url_for('uploads', filename=video.name) }}" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>-->
-        </video>
-      </div>
-
+<div class="video-container">
+  <div class="player-list">
+    <video id="video" [src]="streamVideoURL" width="400" height="300" controls="controls"></video>
   </div>
-
-  <div class="chat-container">
-    <div class="scroll" id="image-span"></div>
-  </div>
-
-<!--  <div class="chat-container">-->
-<!--    <div class="row">-->
-<!--      <div class="col-sm-4"></div>-->
-<!--      <div class="col-sm-4 container-title">CHAT</div>-->
-<!--      <div class="col-sm-4"></div>-->
-<!--    </div>-->
-<!--    <div id="talkjs-container">Loading chat with user {{user?.username}} ...</div>-->
-<!--  </div>-->
-
-<!--  <div id="main-section">-->
-			<!-- Room selection -->
-<!--			<nav id="sidebar">-->
-<!--				<h4>ROOMS</h4>-->
-<!--				{% for room in rooms %}-->
-<!--					<p class="select-room">{{ room|title }}</p>-->
-<!--				{% endfor %}-->
-<!--			</nav>-->
-
-			<!-- Message area -->
-
-<!--			<div id="rightside-pannel">-->
-<!--				&lt;!&ndash; Display message&ndash;&gt;-->
-<!--				<div id="display-message-section">-->
-
-<!--				</div>-->
-<!--				&lt;!&ndash; Input message &ndash;&gt;-->
-<!--				<div id="input-area">-->
-<!--					<input type="text" id="user_message" placeholder="Type here.." autocomplete="off">-->
-<!--					<button type="button" id="send_message">SEND</button>-->
-<!--				</div>-->
-<!--			</div>-->
-<!--		</div>-->
-
 </div>

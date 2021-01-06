@@ -1,38 +1,54 @@
-import { Injectable } from '@angular/core';
-// import * as Talk from 'talkjs'
-import { User} from '@app/_models';
-import { AuthenticationService } from '@app/_services';
+import { Component, OnInit } from '@angular/core';
+import { VideoService } from '@app/_services';
+import {first} from 'rxjs/operators';
+import { Observable, EMPTY, throwError, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import base64url from 'base64url';
+import {flatMap} from 'rxjs/internal/operators';
+import {HttpResponse} from '@angular/common/http';
+import {DomSanitizer} from '@angular/platform-browser';
 
-@Injectable({
-  providedIn: 'root'
+
+@Component({
+  selector: 'app-vdo-player',
+  templateUrl: './player.component.html',
+  styleUrls: ['./player.component.scss']
 })
-export class TalkService {
-  private static APP_ID = 'YOUR_APP_ID';
-   private currentTalkUser: User['username'];
-   // private currentSessionDeferred = new Deferred();
 
-   constructor(private authenticationService: AuthenticationService) { }
+export class PlayerComponent implements OnInit {
 
-   // async createCurrentSession() {
-   //    await Talk.ready;
-   //
-   //    const currentUser = await this.authenticationService.getCurrentUser();
-   //    const currentTalkUser = await this.createTalkUser(currentUser);
-   //    const session = new Talk.Session({
-   //       appId: TalkService.APP_ID,
-   //       me: currentTalkUser
-   //    });
-   //    this.currentTalkUser = currentTalkUser;
-   //    this.currentSessionDeferred.resolve(session);
-   // }
+  videoName: string;
+  streamVideo;
+  streamVideoURL;
 
-   // async createTalkUser(applicationUser: User) : Promise {
-   // await Talk.ready;
-   //
-   // return new Talk.User({
-   //    id: applicationUser.id,
-   //    name: applicationUser.username,
-   //    photoUrl: applicationUser.profilePictureUrl
-   //    });
-   // }
+  constructor(private videoService: VideoService, private sanitizer: DomSanitizer) {
+  }
+
+  ngOnInit() {
+    this.videoService.getVideo().subscribe(p => {
+      this.videoName = p;
+    });
+    this.videoService.streamVideo('long_video1.mp4').subscribe(
+      (response: HttpResponse<Blob>) => {
+        this.streamVideoURL = response.url;
+        // const binaryData = [];
+        // binaryData.push(response.body);
+        // this.streamVideoURL = URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+        // this.sanitizer.bypassSecurityTrustResourceUrl(this.streamVideoURL);
+
+        // const cuttedPart = this.streamVideoURL.split('/');
+        // const decodedCuttedPart = atob(cuttedPart[3]);
+        // this.streamVideoURL = cuttedPart[0] + cuttedPart[1] + cuttedPart[2] + decodedCuttedPart;
+
+        // .streamVideoURL = base64url.decode(this.streamVideoURL)
+      },
+      error => console.log('oops!!!', error)
+    );
+  }
+
+  OnDestroy() {
+    URL.revokeObjectURL(this.streamVideoURL)
+  }
+
+
 }

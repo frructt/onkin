@@ -1,6 +1,5 @@
 import { io } from 'socket.io-client';
 import {environment} from '@environments/environment';
-import {Injectable} from '@angular/core';
 
 export class SocketioService {
   socket;

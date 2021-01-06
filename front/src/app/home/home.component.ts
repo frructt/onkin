@@ -20,12 +20,12 @@ export class HomeComponent implements OnInit {
 
       const currentUser = this.authenticationService.currentUserValue;
       if (currentUser) {
-          this.router.navigate(['/mocked']);
+          this.router.navigate(['/player']);
           return true;
       }
 
       // not logged in so redirect to login page
-      this.router.navigate(['/login'], { queryParams: { returnUrl: '/mocked' } });
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/player' } });
       return false;
     }
 

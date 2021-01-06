@@ -11,7 +11,6 @@ export class MockedComponent {
 
     constructor(private userService: UserService) { }
 
-  // tslint:disable-next-line:use-lifecycle-interface
     ngOnInit() {
         this.loading = true;
         this.userService.getAllUsers().pipe(first()).subscribe(users => {

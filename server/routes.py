@@ -58,7 +58,7 @@ def test_connect():
 
 @app.route("/")
 @app.route("/home")
-@login_required
+@token_required
 def home():
     return jsonify({"result": True})
 
@@ -70,11 +70,18 @@ def users():
     return jsonify([{"username": user.username} for user in users_])
 
 
-@app.route("/watch_video")
-@login_required
-def watch_video():
-    video_list = DemoFileStreamTable1.query.all()
-    return render_template("watch_video.html", video_list=video_list, rooms=ROOMS)
+# @app.route("/watch_video")
+# @token_required
+# def watch_video():
+#     video_list = DemoFileStreamTable1.query.all()
+#     return render_template("watch_video.html", video_list=video_list, rooms=ROOMS)
+
+
+@app.route("/api/getVideoName")
+@token_required
+def get_video_name():
+    video = DemoFileStreamTable1.query.first()
+    return jsonify({"video_name": video.name})
 
 
 @socketio.on('message')
@@ -86,7 +93,7 @@ def message(data):
 
 
 @socketio.on("join")
-@authenticated_only
+@token_required
 def join(data):
     join_room(data["room"])
     msg_value = "{0} has joined the {1} room".format(data["username"], data["room"])
@@ -94,7 +101,7 @@ def join(data):
 
 
 @socketio.on("leave")
-@authenticated_only
+@token_required
 def leave(data):
     leave_room(data["room"])
     msg_value = "{0} has left the {1} room".format(data["username"], data["room"])
@@ -102,29 +109,28 @@ def leave(data):
 
 
 @socketio.on('play-video')
-@authenticated_only
+@token_required
 def play_video(data):
     print(f"\n\n{data}\n\n")
     emit("onplay event", {"username": data["username"], "room": data["room"]}, broadcast=True)
 
 
 @socketio.on('pause-video')
-@authenticated_only
+@token_required
 def pause_video(data):
     print(f"\n\n{data}\n\n")
     emit("onpause event", {"username": data["username"], "room": data["room"]}, broadcast=True)
 
 
 @socketio.on('change-video-position')
-@authenticated_only
+@token_required
 def change_video_position(data):
     emit("change video position event",
          {"current_position": data["current_position"], "username": data["username"], "room": data["room"]},
          broadcast=True)
 
 
-@app.route('/uploads/<filename>')
-@login_required
+@app.route('/api/uploads/<filename>')
 def uploads(filename):
     file = DemoFileStreamTable1.query.filter_by(my_file__file_name=filename).first()
     return file_upload.stream_file(file, filename="my_file")
@@ -177,7 +183,6 @@ def logout():
 
 
 @app.route("/upload", methods=["GET", "POST"])
-@login_required
 def upload_file():
     if request.method == "POST":
         file = request.files["upload"]
