@@ -1,6 +1,8 @@
 ﻿import {Component, OnInit} from '@angular/core';
-import {AuthenticationService, UserService} from '@app/_services';
+import {AuthenticationService, UserService, SocketioService} from '@app/_services';
 import {Router} from '@angular/router';
+import { io } from 'socket.io-client';
+import {environment} from '@environments/environment';
 
 @Component({ templateUrl: 'home.component.html' ,
              styleUrls: ['home.component.scss']
@@ -10,9 +12,17 @@ export class HomeComponent implements OnInit {
 
     constructor(private userService: UserService,
                 private authenticationService: AuthenticationService,
-                private router: Router) { }
+                private router: Router,
+                private socket: SocketioService) { }
 
     ngOnInit() {
+      this.socket.connect();
+      this.sendmessage();
+      this.socket.iniServerSocket()
+    }
+
+    sendmessage() {
+      this.socket.socketInstance.emit('new-message', 'Hi-flask');
     }
 
     onCreateRoomSubmit() {

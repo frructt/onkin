@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { VideoService } from '@app/_services';
+import {AuthenticationService, SocketioService, VideoService} from '@app/_services';
 import {HttpResponse} from '@angular/common/http';
+import {User} from '@app/_models';
 
 
 @Component({
@@ -11,12 +12,25 @@ import {HttpResponse} from '@angular/common/http';
 
 export class PlayerComponent implements OnInit {
 
+  // socket: SocketioService;
+
+  currentUser: string;
+  anotherUser: string;
   videoName: string;
   videoItem;
   data;
+  video;
+  // video = document.createElement('video');
+  isPlaying: boolean;
 
 
-  constructor(private videoService: VideoService) {
+  constructor(private videoService: VideoService,
+              private authenticationService: AuthenticationService,
+              private socket: SocketioService) {
+    socket.connect();
+    this.currentUser = this.authenticationService.currentUserValue.username;
+    this.anotherUser = this.authenticationService.currentUserValue.username;
+    this.isPlaying = false;
   }
 
   ngOnInit() {
@@ -30,18 +44,98 @@ export class PlayerComponent implements OnInit {
           src: response.url,
           type: 'video/mp4'
         };
+        console.log('this.videoItem.src')
       },
       error => console.log('oops!!!', error)
     );
+    this.video = document.getElementById('videoId');
+    this.onPauseEvent();
+    this.onPlayEvent();
+    this.changeVideoPositionEvent();
   }
 
-  videoPlayerInit(data) {
-    this.data = data;
+  // Play video function
+  playVid() {
+    if (this.video.paused && !this.isPlaying) {
+        console.log('start playing for user ' + this.currentUser);
+        this.video.play();
+    } else {
+        console.log('video is already played for user ' + this.currentUser);
+    }
+    }
 
-    this.data.getDefaultMedia().subscriptions.loadedMetadata.subscribe(this.initVdo.bind(this));
+
+  playVideo() {
+      this.isPlaying = true;
+      if (this.anotherUser === this.currentUser){
+          console.log('video is playing from user ' + this.currentUser);
+          this.socket.socketInstance.emit('play-video', {username: this.currentUser});
+      } else {
+          console.log(' ' + this.anotherUser + ' != ' + this.currentUser);
+          this.anotherUser = this.currentUser;
+      }
   }
 
-  initVdo() {
-    this.data.play();
+  onPlayEvent() {
+    this.socket.socketInstance.on('onplay event', data => {
+      this.anotherUser = data.username
+      this.playVid();
+    });
+  }
+
+  // Pause video function
+  pauseVid() {
+    if (!this.video.paused && this.isPlaying) {
+      console.log('start stopping for user ' + this.currentUser);
+      this.video.pause();
+    } else {
+      console.log('video is already stopped for user ' + this.currentUser);
+    }
+  }
+
+  pauseVideo() {
+    this.isPlaying = false;
+    if (this.anotherUser === this.currentUser){
+      if (!this.video.seeking) {  // if seeking don't send pause event to server
+        console.log('video is paused by user ' + this.currentUser);
+        this.socket.socketInstance.emit('pause-video', {username: this.currentUser});
+      }
+    } else {
+      console.log(' ' + this.anotherUser + ' != ' + this.currentUser);
+      this.anotherUser = this.currentUser;
+    }
+  }
+
+  onPauseEvent() {
+    this.socket.socketInstance.on('onpause event', data => {
+      this.anotherUser = data.username
+      this.pauseVid();
+    });
+  }
+
+  onSeeked() {
+    if (this.anotherUser === this.currentUser){
+      console.log(this.video.currentTime);
+      this.socket.socketInstance.emit('change-video-position',
+        {current_position: this.video.currentTime, username: this.currentUser});
+    } else {
+      console.log(' ' + this.anotherUser + ' != ' + this.currentUser);
+      this.anotherUser = this.currentUser;
+    }
+  }
+
+  changeVideoPositionEvent() {
+    this.socket.socketInstance.on('change video position event', data => {
+        console.log('difference in positions (sec): ' + Math.abs((data.current_position - this.video.currentTime)))
+        if ((this.video.currentTime !== data.current_position) && data.username !== this.currentUser) {
+            this.anotherUser = data.username;
+            console.log('video.currentTime: ' + this.video.currentTime + ' current_position: ' + data.current_position);
+            this.video.currentTime = data.current_position;
+        }
+        else {
+            this.anotherUser = data.username;
+            console.log('position in the same');
+        }
+    })
   }
 }
