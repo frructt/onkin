@@ -1,8 +1,24 @@
-<article class="media content-section">
-			<div class="media-body">
-				<div class="film-metadata">
-          <video (play)="playVideo()" (pause)="pauseVideo()" (seeked)="onSeeked()" [src]="videoItem.src"
-                 id="videoId" width="400" height="300" controls="controls"></video>
+<div class="">
+  <article class="media content-section">
+        <div class="media-body">
+          <div class="film-metadata">
+            <video (play)="playVideo()" (pause)="pauseVideo()" (seeked)="onSeeked()"
+                   id="videoId" width="400" height="300" controls="controls">
+              <source src="videoItem.src">
+            </video>
+          </div>
         </div>
-      </div>
-</article>
+  </article>
+  <form (ngSubmit)="sendMessage(sendForm)" #sendForm="ngForm">
+    <div class="chat-messages">
+         <div class="chat-messages-show-container">
+           <ul class="chat-messages-show-list">
+           </ul>
+         </div>
+       <div class="chat-messages-create-container">
+         <input type="text" id="input-message" name="message" class="chat-messages-create-input" placeholder="Type here.." ngModel>
+         <button  class="chat-messages-create-button" type="submit"> Send </button>
+       </div>
+    </div>
+  </form>
+</div>

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {AuthenticationService, SocketioService, VideoService} from '@app/_services';
 import {HttpResponse} from '@angular/common/http';
+import {NgForm} from '@angular/forms'
 import {User} from '@app/_models';
 
 
@@ -10,10 +11,9 @@ import {User} from '@app/_models';
   styleUrls: ['./player.component.scss']
 })
 
-export class PlayerComponent implements OnInit {
+export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   // socket: SocketioService;
-
   currentUser: string;
   anotherUser: string;
   videoName: string;
@@ -22,6 +22,7 @@ export class PlayerComponent implements OnInit {
   video;
   // video = document.createElement('video');
   isPlaying: boolean;
+  message: string;
 
 
   constructor(private videoService: VideoService,
@@ -52,7 +53,56 @@ export class PlayerComponent implements OnInit {
     this.onPauseEvent();
     this.onPlayEvent();
     this.changeVideoPositionEvent();
+    this.BroadcastMessages()
   }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // this.SendMessage()
+    // listen chat messages
+    // this.BroadcastMessages()
+  }
+
+  ngOnDestroy() {}
+
+  BroadcastMessages() {
+    this.socket.socketInstance.on('message', (data: string) => {
+     if (data) {
+      const p = document.createElement('p');
+      const spanUsername = document.createElement('span')
+      const spanTimestamp = document.createElement('span')
+      const br = document.createElement('br');
+      if (data['username']) {
+          spanUsername.innerHTML = data['username'];
+          spanTimestamp.innerHTML = data['time_stamp'];
+          p.innerHTML = spanUsername.outerHTML + br.outerHTML + data['msg'] + br.outerHTML + spanTimestamp.outerHTML;
+          document.getElementById('message-list').append(p);
+      } else {
+          // printSysMsg(data.msg)
+      }
+      // element.innerHTML = data;
+      // element.style.background = 'white';
+      // element.style.padding =  '15px 30px';
+      // element.style.margin = '10px';
+      // document.getElementById('message-list').appendChild(element);
+      }
+    });
+  }
+
+  sendMessage(sendForm: NgForm) {
+     this.socket.socketInstance.emit('message', {username: this.currentUser, msg: sendForm.value.message});
+     const element = document.createElement('li');
+     element.innerHTML = this.message;
+     element.style.background = 'white';
+     element.style.padding =  '15px 30px';
+     element.style.margin = '10px';
+     element.style.textAlign = 'right';
+     document.getElementById('message-list').appendChild(element);
+     this.message = '';
+  }
+
+  // sendMessage(sendForm: NgForm) {
+  //   console.log({username: this.currentUser, msg: sendForm.value.message})
+  // }
 
   // Play video function
   playVid() {

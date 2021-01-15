@@ -81,8 +81,7 @@ def handle_message(data):
 @socketio.on('message', namespace='/api')
 def message(data):
     print(f"\n\n{data}\n\n")
-    # send({"msg": data["msg"], "username": data["username"], "time_stamp": datetime.datetime.now().strftime("%b-%d %H:%M%S.%f")},
-    #      room=data["room"])
+    send({"msg": data["msg"], "username": data["username"], "time_stamp": datetime.datetime.now().strftime("%b-%d %H:%M%S.%f")})
 
 
 @socketio.on("join")

@@ -13,7 +13,6 @@ export class SocketioService {
 
   connect() {
     this.socketInstance = io(environment.apiUrl);
-    this.socketInstance.emit('message', {data: 'Hello there from Angular.'});
   }
 
   iniServerSocket() {
