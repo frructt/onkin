@@ -1,24 +1,93 @@
-<div class="">
-  <article class="media content-section">
-        <div class="media-body">
-          <div class="film-metadata">
-            <video (play)="playVideo()" (pause)="pauseVideo()" (seeked)="onSeeked()"
-                   id="videoId" width="400" height="300" controls="controls">
-              <source src="videoItem.src">
-            </video>
+<div class="main-container">
+<!--  <article class="media content-section">-->
+  <div class="media-body">
+    <div class="film-metadata">
+      <video (play)="playVideo()" (pause)="pauseVideo()" (seeked)="onSeeked()"
+             id="videoId" width="400" height="300" controls="controls">
+        <source src="videoItem.src">
+      </video>
+    </div>
+  </div>
+<!--  </article>-->
+
+  <button class="button show-chat" id="showChat" (click)="openChat()">SHOW CHAT</button>
+
+  <div class="chat-popup" id="chatForm">
+
+    <form (ngSubmit)="sendMessage(sendForm)" #sendForm="ngForm" class="form-container">
+      <h1>CHAT OPEN</h1>
+
+      <div class="mesgs">
+          <div class="msg_history">
+            <li class="message" *ngFor="let message of messages">
+              <div
+                *ngIf="
+                  message.user.id !== currentUser.me.id;
+                  then incoming_msg;
+                  else outgoing_msg
+                "
+              ></div>
+
+              <ng-template #incoming_msg>
+                <div class="incoming_msg">
+                  <div class="incoming_msg_img">
+                    <img
+                      src="https://i.imgur.com/k2PZLZa.png"
+                      alt="User avatar"
+                    />
+                  </div>
+                  <div class="received_msg">
+                    <div class="received_withd_msg">
+                      <p>{{ message.text }}</p>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template #outgoing_msg>
+                <div class="outgoing_msg">
+                  <div class="sent_msg">
+                    <p>{{ message.text }}</p>
+                  </div>
+                </div>
+              </ng-template>
+
+            </li>
+          </div>
+          <div class="type_msg">
+            <form class="input_msg_write" (ngSubmit)="sendMessage()">
+              <input
+                type="text"
+                class="write_msg"
+                placeholder="Type a message"
+                name="newMessage"
+                [(ngModel)]="newMessage"
+              />
+              <button class="msg_send_btn" type="button">
+                <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+              </button>
+              <button class="close-chat" (click)="closeChat()">CLOSE CHAT</button>
+
+            </form>
           </div>
         </div>
-  </article>
-  <form (ngSubmit)="sendMessage(sendForm)" #sendForm="ngForm">
-    <div class="chat-messages">
-         <div class="chat-messages-show-container">
-           <ul class="chat-messages-show-list">
-           </ul>
-         </div>
-       <div class="chat-messages-create-container">
-         <input type="text" id="input-message" name="message" class="chat-messages-create-input" placeholder="Type here.." ngModel>
-         <button  class="chat-messages-create-button" type="submit"> Send </button>
-       </div>
-    </div>
-  </form>
+
+<!--      <div class="chat-messages">-->
+
+<!--           <div class="chat-messages-show-container">-->
+<!--             <ul class="chat-messages-show-list">-->
+<!--             </ul>-->
+<!--           </div>-->
+
+<!--         <div class="chat-messages-create-container">-->
+
+<!--           <input type="text" id="input-message" name="message" class="chat-messages-create-input" placeholder="Type here.." ngModel>-->
+<!--           <button  class="button chat-messages-create-button" type="submit">Send</button>-->
+
+<!--           <button class="button close-chat" (click)="closeChat()">CLOSE CHAT</button>-->
+
+<!--         </div>-->
+<!--      </div>-->
+    </form>
+  </div>
 </div>

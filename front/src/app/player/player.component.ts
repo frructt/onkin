@@ -188,4 +188,15 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
         }
     })
   }
+
+  openChat () {
+    document.getElementById("chatForm").style.display = "block";
+    document.getElementById("showChat").style.display = "none";
+  }
+
+  closeChat() {
+      document.getElementById("chatForm").style.display = "none";
+      document.getElementById("showChat").style.display = "block";
+
+  }
 }
