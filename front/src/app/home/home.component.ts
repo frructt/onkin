@@ -16,14 +16,14 @@ export class HomeComponent implements OnInit {
                 private socket: SocketioService) { }
 
     ngOnInit() {
-      this.socket.connect();
-      this.sendmessage();
-      this.socket.iniServerSocket()
+      // this.socket.connect();
+      // this.sendmessage();
+      // this.socket.iniServerSocket()
     }
 
-    sendmessage() {
-      this.socket.socketInstance.emit('new-message', 'Hi-flask');
-    }
+    // sendmessage() {
+    //   this.socket.socketInstance.emit('new-message', 'Hi-flask');
+    // }
 
     onCreateRoomSubmit() {
       this.submitted = true;

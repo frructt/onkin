@@ -13,16 +13,14 @@
   <button class="button show-chat" id="showChat" (click)="openChat()">SHOW CHAT</button>
 
   <div class="chat-popup" id="chatForm">
-
-    <form (ngSubmit)="sendMessage(sendForm)" #sendForm="ngForm" class="form-container">
       <h1>CHAT OPEN</h1>
 
       <div class="mesgs">
           <div class="msg_history">
-            <li class="message" *ngFor="let message of messages">
+            <li class="message" *ngFor="let chatMessage of messages">
               <div
                 *ngIf="
-                  message.user.id !== currentUser.me.id;
+                  chatMessage.username !== currentUser;
                   then incoming_msg;
                   else outgoing_msg
                 "
@@ -38,7 +36,7 @@
                   </div>
                   <div class="received_msg">
                     <div class="received_withd_msg">
-                      <p>{{ message.text }}</p>
+                      <p>{{ chatMessage.msg }}</p>
                     </div>
                   </div>
                 </div>
@@ -47,7 +45,7 @@
               <ng-template #outgoing_msg>
                 <div class="outgoing_msg">
                   <div class="sent_msg">
-                    <p>{{ message.text }}</p>
+                    <p>{{ chatMessage.msg }}</p>
                   </div>
                 </div>
               </ng-template>
@@ -55,7 +53,7 @@
             </li>
           </div>
           <div class="type_msg">
-            <form class="input_msg_write" (ngSubmit)="sendMessage()">
+            <form class="input_msg_write" (ngSubmit)="sendMessage(sendForm)" #sendForm="ngForm">
               <input
                 type="text"
                 class="write_msg"
@@ -63,8 +61,9 @@
                 name="newMessage"
                 [(ngModel)]="newMessage"
               />
-              <button class="msg_send_btn" type="button">
+              <button class="msg_send_btn" type="submit">
                 <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+                SEND
               </button>
               <button class="close-chat" (click)="closeChat()">CLOSE CHAT</button>
 
@@ -88,6 +87,5 @@
 
 <!--         </div>-->
 <!--      </div>-->
-    </form>
   </div>
 </div>

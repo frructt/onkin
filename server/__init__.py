@@ -12,7 +12,7 @@ from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SECRET_KEY"] = '7104ba209f0cf2e63b28982f7b8782e8'
-app.config["SQLALCHEMY_DATABASE_URI"] = "mssql+pyodbc://admin:12345@83.167.115.245/TestFileStream?driver=SQL Server?Trusted_Connection=yes"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mssql+pyodbc://admin:12345@192.168.1.76/TestFileStream?driver=SQL Server?Trusted_Connection=yes"
 api = Api(app)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 db = SQLAlchemy(app)
@@ -29,7 +29,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 UPLOAD_FOLDER = join(dirname(realpath(__file__)), "uploads")
 ALLOWED_EXTENSIONS = ["jpg", "png", "mov", "mp4", "mpg"]
 MAX_CONTENT_LENGTH = 1000 * 1024 * 1024  # 1000mb
-SQLALCHEMY_DATABASE_URI = "mssql+pyodbc://admin:12345@83.167.115.245/TestFileStream?driver=SQL Server?Trusted_Connection=yes"
+SQLALCHEMY_DATABASE_URI = "mssql+pyodbc://admin:12345@192.168.1.76/TestFileStream?driver=SQL Server?Trusted_Connection=yes"
 
 file_upload = FileUpload(
     app,

@@ -51,7 +51,6 @@ def token_required(f):
     return decorated
 
 
-@app.route("/api")
 @app.route("/api/home")
 @token_required
 def home():

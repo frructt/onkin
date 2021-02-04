@@ -1,5 +1,6 @@
 import {Component, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {AuthenticationService, SocketioService, VideoService} from '@app/_services';
+import { ChatMessageDto } from '@app/_models'
 import {HttpResponse} from '@angular/common/http';
 import {NgForm} from '@angular/forms'
 import {User} from '@app/_models';
@@ -22,7 +23,9 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   video;
   // video = document.createElement('video');
   isPlaying: boolean;
-  message: string;
+  // message: string;
+  newMessage = '';
+  messages: ChatMessageDto[] = []
 
 
   constructor(private videoService: VideoService,
@@ -67,15 +70,18 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   BroadcastMessages() {
     this.socket.socketInstance.on('message', (data: string) => {
      if (data) {
-      const p = document.createElement('p');
-      const spanUsername = document.createElement('span')
-      const spanTimestamp = document.createElement('span')
-      const br = document.createElement('br');
+      // const p = document.createElement('p');
+      // const spanUsername = document.createElement('span')
+      // const spanTimestamp = document.createElement('span')
+      // const br = document.createElement('br');
       if (data['username']) {
-          spanUsername.innerHTML = data['username'];
-          spanTimestamp.innerHTML = data['time_stamp'];
-          p.innerHTML = spanUsername.outerHTML + br.outerHTML + data['msg'] + br.outerHTML + spanTimestamp.outerHTML;
-          document.getElementById('message-list').append(p);
+          // spanUsername.innerHTML = data['username'];
+          // spanTimestamp.innerHTML = data['time_stamp'];
+          // p.innerHTML = spanUsername.outerHTML + br.outerHTML + data['msg'] + br.outerHTML + spanTimestamp.outerHTML;
+          // document.getElementById('message-list').append(p);
+
+          const chatMessageDto = new ChatMessageDto(data['username'], data['msg'], data['time_stamp'])
+          this.messages.push(chatMessageDto)
       } else {
           // printSysMsg(data.msg)
       }
@@ -89,15 +95,9 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   sendMessage(sendForm: NgForm) {
-     this.socket.socketInstance.emit('message', {username: this.currentUser, msg: sendForm.value.message});
-     const element = document.createElement('li');
-     element.innerHTML = this.message;
-     element.style.background = 'white';
-     element.style.padding =  '15px 30px';
-     element.style.margin = '10px';
-     element.style.textAlign = 'right';
-     document.getElementById('message-list').appendChild(element);
-     this.message = '';
+     // const chatMessageDto = new ChatMessageDto(this.currentUser, sendForm.value.newMessage, '')
+     this.socket.socketInstance.emit('message', {username: this.currentUser, msg: sendForm.value.newMessage});
+     sendForm.controls.newMessage.reset();
   }
 
   // sendMessage(sendForm: NgForm) {
@@ -190,13 +190,13 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   openChat () {
-    document.getElementById("chatForm").style.display = "block";
-    document.getElementById("showChat").style.display = "none";
+    document.getElementById('chatForm').style.display = 'block';
+    document.getElementById('showChat').style.display = 'none';
   }
 
   closeChat() {
-      document.getElementById("chatForm").style.display = "none";
-      document.getElementById("showChat").style.display = "block";
+      document.getElementById('chatForm').style.display = 'none';
+      document.getElementById('showChat').style.display = 'block';
 
   }
 }
