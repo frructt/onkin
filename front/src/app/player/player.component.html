@@ -3,13 +3,15 @@
   <div class="media-body">
     <div class="film-metadata">
       <video (play)="playVideo()" (pause)="pauseVideo()" (seeked)="onSeeked()"
-             id="videoId" width="400" height="300" controls="controls">
-        <source src="videoItem.src">
+             id="videoId" width="400" height="300" controls="controls" [src]="videoItem.src">
+<!--        <source src="">-->
       </video>
     </div>
   </div>
 <!--  </article>-->
-
+  <div class="room">
+    <p id="{{roomName}}">{{roomName}}</p>
+  </div>
   <button class="button show-chat" id="showChat" (click)="openChat()">SHOW CHAT</button>
 
   <div class="chat-popup" id="chatForm">
@@ -30,7 +32,7 @@
                 <div class="incoming_msg">
                   <div class="incoming_msg_img">
                     <img
-                      src="https://i.imgur.com/k2PZLZa.png"
+                      src="assets/icon/avatar2.png"
                       alt="User avatar"
                     />
                   </div>

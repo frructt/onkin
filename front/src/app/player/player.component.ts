@@ -4,6 +4,8 @@ import { ChatMessageDto } from '@app/_models'
 import {HttpResponse} from '@angular/common/http';
 import {NgForm} from '@angular/forms'
 import {User} from '@app/_models';
+import {first} from 'rxjs/operators';
+import { RoomService } from '@app/_services';
 
 
 @Component({
@@ -25,12 +27,14 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   isPlaying: boolean;
   // message: string;
   newMessage = '';
-  messages: ChatMessageDto[] = []
+  messages: ChatMessageDto[] = [];
+  roomName: string;
 
 
   constructor(private videoService: VideoService,
               private authenticationService: AuthenticationService,
-              private socket: SocketioService) {
+              private socket: SocketioService,
+              private roomService: RoomService) {
     socket.connect();
     this.currentUser = this.authenticationService.currentUserValue.username;
     this.anotherUser = this.authenticationService.currentUserValue.username;
@@ -38,6 +42,9 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
+    this.roomService.generateNewRoom(this.currentUser).subscribe(data => {
+        this.roomName = data.roomName;
+    });
     this.videoService.getVideo().subscribe(p => {
       this.videoName = p;
     });
@@ -68,28 +75,14 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy() {}
 
   BroadcastMessages() {
-    this.socket.socketInstance.on('message', (data: string) => {
+    this.socket.socketInstance.on('message', (data) => {
      if (data) {
-      // const p = document.createElement('p');
-      // const spanUsername = document.createElement('span')
-      // const spanTimestamp = document.createElement('span')
-      // const br = document.createElement('br');
-      if (data['username']) {
-          // spanUsername.innerHTML = data['username'];
-          // spanTimestamp.innerHTML = data['time_stamp'];
-          // p.innerHTML = spanUsername.outerHTML + br.outerHTML + data['msg'] + br.outerHTML + spanTimestamp.outerHTML;
-          // document.getElementById('message-list').append(p);
-
-          const chatMessageDto = new ChatMessageDto(data['username'], data['msg'], data['time_stamp'])
-          this.messages.push(chatMessageDto)
-      } else {
-          // printSysMsg(data.msg)
-      }
-      // element.innerHTML = data;
-      // element.style.background = 'white';
-      // element.style.padding =  '15px 30px';
-      // element.style.margin = '10px';
-      // document.getElementById('message-list').appendChild(element);
+        if (data.username) {
+            const chatMessageDto = new ChatMessageDto(data.username, data.msg, data.time_stamp)
+            this.messages.push(chatMessageDto)
+        } else {
+            // printSysMsg(data.msg)
+        }
       }
     });
   }

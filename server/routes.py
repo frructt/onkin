@@ -9,7 +9,7 @@ from flask_socketio import send, emit, join_room, leave_room, disconnect
 from sqlalchemy.exc import SQLAlchemyError
 
 from server import app, db, file_upload, socketio, ROOMS
-from server.models import User, DemoFileStreamTable1
+from server.models import User, DemoFileStreamTable1, Room
 
 
 # decorator
@@ -64,6 +64,14 @@ def users():
     return jsonify([{"username": user.username} for user in users_])
 
 
+@app.route("/api/generateNewRoom", methods=["POST"])
+@token_required
+def generate_new_room():
+    json_data = request.json
+    room_name = Room.add_new_room(json_data["username"])
+    return jsonify({"roomName": room_name})
+
+
 @app.route("/api/getVideoName")
 @token_required
 def get_video_name():
@@ -80,7 +88,8 @@ def handle_message(data):
 @socketio.on('message', namespace='/api')
 def message(data):
     print(f"\n\n{data}\n\n")
-    send({"msg": data["msg"], "username": data["username"], "time_stamp": datetime.datetime.now().strftime("%b-%d %H:%M%S.%f")})
+    send({"msg": data["msg"], "username": data["username"],
+          "time_stamp": datetime.datetime.now().strftime("%b-%d %H:%M%S.%f")}, broadcast=True)
 
 
 @socketio.on("join")
