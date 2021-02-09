@@ -48,7 +48,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.videoService.getVideo().subscribe(p => {
       this.videoName = p;
     });
-    this.videoService.streamVideo('long_video1.mp4').subscribe(
+    this.videoService.streamVideo('a.mp4').subscribe(
       (response: HttpResponse<Blob>) => {
         this.videoItem = {
           name: 'Video one',
@@ -63,7 +63,9 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.onPauseEvent();
     this.onPlayEvent();
     this.changeVideoPositionEvent();
-    this.BroadcastMessages()
+    this.BroadcastMessages();
+
+    this.openChat();
   }
 
   ngOnChanges(changes: SimpleChanges) {

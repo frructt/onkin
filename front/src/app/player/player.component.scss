@@ -6,7 +6,14 @@
 }
 
 .chat-popup {
-  display: none;
+  display: block;
+
+  background: #090e15;
+
+  border-radius: 12px;
+
+  width: 20rem;
+
   //position: fixed;
 
   //padding: 0 0 30px 0;
@@ -55,6 +62,24 @@
 	margin: 26px 0 26px;
 }
 
+.outgoing_msg p {
+  color: #1a253c;
+  background-color: #a4a5a5;
+}
+
+.incoming_msg {
+  overflow: hidden;
+  padding: 0 6rem 0 10px;
+}
+
+.incoming_msg p {
+  color: #a4a5a5;
+  background-color: #1a253c;
+
+  border-radius: 5px;
+  padding: 0.3rem 0 0.3rem 1rem;
+}
+
 .sent_msg {
 	float: right;
 	width: 46%;
@@ -70,14 +95,9 @@
 }
 
 .close-chat {
-  float: right;
-
-  font-size: 1.1rem;
-
-  height: 2em;
-  width: 10rem;
-
+  background: none;
   border: none;
+  margin-bottom: 10px;
 }
 
 
@@ -85,14 +105,35 @@
 .type_msg {
 	border-top: 1px solid #c4c4c4;
 	position: relative;
+
+  padding-bottom: 10px;
 }
 
+//.input_msg_write {
+//  display: flex;
+//  flex-direction: row;
+//}
+
 .write_msg {
-  color: #E5E5E5;
+  color: #8f9091;
+  //background-color: #4d5054;
+}
+
+.send_btn {
+  border: none;
+
+  background: #939495;
+  color: #070b10;
+
+  font-weight: 600;
+  text-transform: uppercase;
+
+  width: 4rem;
+  height: 2.7rem;
 }
 
 .msg_send_btn {
-	background: #e5e5e5 none repeat scroll 0 0;
+	background: #a4a5a5 none repeat scroll 0 0;
 	border: medium none;
 	border-radius: 50%;
 	color: #fff;

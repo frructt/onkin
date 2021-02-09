@@ -3,21 +3,26 @@
   <div class="media-body">
     <div class="film-metadata">
       <video (play)="playVideo()" (pause)="pauseVideo()" (seeked)="onSeeked()"
-             id="videoId" width="400" height="300" controls="controls" [src]="videoItem.src">
+             id="videoId" width="600" height="338" controls="controls" [src]="videoItem.src">
 <!--        <source src="">-->
       </video>
     </div>
   </div>
 <!--  </article>-->
-  <div class="room">
-    <p id="{{roomName}}">{{roomName}}</p>
-  </div>
+<!--  <div class="room">-->
+<!--    <p id="{{roomName}}">{{roomName}}</p>-->
+<!--  </div>-->
   <button class="button show-chat" id="showChat" (click)="openChat()">SHOW CHAT</button>
 
   <div class="chat-popup" id="chatForm">
-      <h1>CHAT OPEN</h1>
+<!--      <h1>CHAT OPEN</h1>-->
 
       <div class="mesgs">
+
+        <button class="close-chat" (click)="closeChat()">
+          <img src="assets/images/close.png" alt="close icon">
+        </button>
+
           <div class="msg_history">
             <li class="message" *ngFor="let chatMessage of messages">
               <div
@@ -30,12 +35,12 @@
 
               <ng-template #incoming_msg>
                 <div class="incoming_msg">
-                  <div class="incoming_msg_img">
-                    <img
-                      src="assets/icon/avatar2.png"
-                      alt="User avatar"
-                    />
-                  </div>
+<!--                  <div class="incoming_msg_img">-->
+<!--                    <img-->
+<!--                      src="assets/icon/avatar2.png"-->
+<!--                      alt="User avatar"-->
+<!--                    />-->
+<!--                  </div>-->
                   <div class="received_msg">
                     <div class="received_withd_msg">
                       <p>{{ chatMessage.msg }}</p>
@@ -54,6 +59,7 @@
 
             </li>
           </div>
+
           <div class="type_msg">
             <form class="input_msg_write" (ngSubmit)="sendMessage(sendForm)" #sendForm="ngForm">
               <input
@@ -63,11 +69,11 @@
                 name="newMessage"
                 [(ngModel)]="newMessage"
               />
-              <button class="msg_send_btn" type="submit">
-                <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-                SEND
-              </button>
-              <button class="close-chat" (click)="closeChat()">CLOSE CHAT</button>
+              <button class="send_btn">SEND</button>
+<!--              <button class="msg_send_btn" type="submit">-->
+<!--                <i class="fa fa-paper-plane-o" aria-hidden="true"></i>-->
+<!--              </button>-->
+
 
             </form>
           </div>
