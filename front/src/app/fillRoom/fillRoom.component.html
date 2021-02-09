@@ -1,0 +1,21 @@
+﻿
+<div class="col-md-10 mall fill-room-container cheight" style="background-color: #c4c4c4">
+  <div class="fill-room-sub-container">
+    <h1 class="text-uppercase">room id</h1>
+    <div class="fill-room-body">
+        <form [formGroup]="fillRoomForm" (ngSubmit)="onSubmit()">
+            <div class="fill-room-group">
+                <input type="text" formControlName="roomId" class="fill-room-form-control border-form" placeholder="roomId" [ngClass]="{ 'is-invalid': submitted && f.roomId.errors }" />
+                <div *ngIf="submitted && f.roomId.errors" class="invalid-feedback">
+                    <div *ngIf="f.roomId.errors.required">Room is required</div>
+                </div>
+            </div>
+            <button onclick="onSubmit()" [disabled]="loading" class="fill-room-btn fill-room-btn-border-form">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                Submit
+            </button>
+            <div *ngIf="error" class="alert alert-danger mt-3 mb-0">{{error}}</div>
+        </form>
+    </div>
+  </div>
+</div>

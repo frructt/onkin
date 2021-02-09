@@ -3,4 +3,5 @@
     username: string;
     password: string;
     authdata?: string;
+    roomId: string;
 }

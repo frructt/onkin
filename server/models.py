@@ -88,10 +88,32 @@ class Room(db.Model):
             room_name = Room.query.filter_by(name=new_room_name).first()
             while room_name:
                 new_room_name = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(4))
+                room_name = Room.query.filter_by(name=new_room_name).first()
             room_dto = Room(name=new_room_name, user_id=user_id)
             db.session.add(room_dto)
             db.session.commit()
+            db.session.close()
             return new_room_name
+        except SQLAlchemyError as e:
+            error = str(e.__dict__['orig'])
+            print(error)
+
+    @staticmethod
+    def add_user_to_room(room_id, username):
+        try:
+            room = Room.query.filter_by(name=room_id).first()
+            if not room:
+                return False
+            user_id = User.get_user(username).id
+            existed_user = Room.query.filter_by(user_id=user_id).first()
+            if existed_user:
+                return True
+            else:
+                room_dto = Room(name=room_id, user_id=user_id)
+                db.session.add(room_dto)
+                db.session.commit()
+                db.session.close()
+                return True
         except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             print(error)

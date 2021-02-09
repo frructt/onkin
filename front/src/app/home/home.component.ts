@@ -1,5 +1,5 @@
 ﻿import {Component, OnInit} from '@angular/core';
-import {AuthenticationService, UserService, SocketioService} from '@app/_services';
+import {AuthenticationService, UserService, SocketioService, RoomService} from '@app/_services';
 import {Router} from '@angular/router';
 import { io } from 'socket.io-client';
 import {environment} from '@environments/environment';
@@ -13,6 +13,7 @@ export class HomeComponent implements OnInit {
     constructor(private userService: UserService,
                 private authenticationService: AuthenticationService,
                 private router: Router,
+                private roomService: RoomService,
                 private socket: SocketioService) { }
 
     ngOnInit() {
@@ -30,6 +31,10 @@ export class HomeComponent implements OnInit {
 
       const currentUser = this.authenticationService.currentUserValue;
       if (currentUser) {
+          this.roomService.generateNewRoom(currentUser.username).subscribe(data => {
+            this.authenticationService.currentUserValue.roomId = data.roomId
+            localStorage.setItem('currentUser', JSON.stringify(this.authenticationService.currentUserValue));
+          });
           this.router.navigate(['/player']);
           return true;
       }
@@ -44,12 +49,12 @@ export class HomeComponent implements OnInit {
 
       const currentUser = this.authenticationService.currentUserValue;
       if (currentUser) {
-        this.router.navigate(['/mocked']);
+        this.router.navigate(['/fillRoom']);
         return true;
       }
 
       // not logged in so redirect to login page
-      this.router.navigate(['/login'], { queryParams: { returnUrl: '/mocked' } });
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/fillRoom' } });
       return false;
     }
 }

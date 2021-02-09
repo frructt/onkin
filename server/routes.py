@@ -68,8 +68,19 @@ def users():
 @token_required
 def generate_new_room():
     json_data = request.json
-    room_name = Room.add_new_room(json_data["username"])
-    return jsonify({"roomName": room_name})
+    room_id = Room.add_new_room(json_data["username"])
+    return jsonify({"roomId": room_id})
+
+
+@app.route("/api/fillRoom", methods=["POST"])
+@token_required
+def fill_room():
+    json_data = request.json
+    bool_ = Room.add_user_to_room(json_data["roomId"], json_data["username"])
+    if bool_:
+        return jsonify({"result": bool_})
+    else:
+        return make_response({"result": "roomId doesn't exist"}, 404)
 
 
 @app.route("/api/getVideoName")

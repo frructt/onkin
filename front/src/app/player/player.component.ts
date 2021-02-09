@@ -28,13 +28,12 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   // message: string;
   newMessage = '';
   messages: ChatMessageDto[] = [];
-  roomName: string;
+  roomId: string;
 
 
   constructor(private videoService: VideoService,
               private authenticationService: AuthenticationService,
-              private socket: SocketioService,
-              private roomService: RoomService) {
+              private socket: SocketioService) {
     socket.connect();
     this.currentUser = this.authenticationService.currentUserValue.username;
     this.anotherUser = this.authenticationService.currentUserValue.username;
@@ -42,13 +41,10 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.roomService.generateNewRoom(this.currentUser).subscribe(data => {
-        this.roomName = data.roomName;
-    });
     this.videoService.getVideo().subscribe(p => {
       this.videoName = p;
     });
-    this.videoService.streamVideo('a.mp4').subscribe(
+    this.videoService.streamVideo('long_video1.mp4').subscribe(
       (response: HttpResponse<Blob>) => {
         this.videoItem = {
           name: 'Video one',

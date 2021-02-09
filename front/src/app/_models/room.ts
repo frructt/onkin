@@ -1,4 +1,4 @@
 export class Room {
-    name: number;
+    id: string;
     userList: string[];
 }
