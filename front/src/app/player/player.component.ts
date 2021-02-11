@@ -38,6 +38,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.currentUser = this.authenticationService.currentUserValue.username;
     this.anotherUser = this.authenticationService.currentUserValue.username;
     this.isPlaying = false;
+    this.roomId = this.authenticationService.currentUserValue.roomId
   }
 
   ngOnInit() {
@@ -75,8 +76,8 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   BroadcastMessages() {
     this.socket.socketInstance.on('message', (data) => {
      if (data) {
-        if (data.username) {
-            const chatMessageDto = new ChatMessageDto(data.username, data.msg, data.time_stamp)
+        if (data.roomId === this.roomId) {
+            const chatMessageDto = new ChatMessageDto(data.username, data.msg, data.roomId, data.time_stamp)
             this.messages.push(chatMessageDto)
         } else {
             // printSysMsg(data.msg)
@@ -87,7 +88,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   sendMessage(sendForm: NgForm) {
      // const chatMessageDto = new ChatMessageDto(this.currentUser, sendForm.value.newMessage, '')
-     this.socket.socketInstance.emit('message', {username: this.currentUser, msg: sendForm.value.newMessage});
+     this.socket.socketInstance.emit('message', {username: this.currentUser, msg: sendForm.value.newMessage, roomId: this.roomId});
      sendForm.controls.newMessage.reset();
   }
 
@@ -110,7 +111,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
       this.isPlaying = true;
       if (this.anotherUser === this.currentUser){
           console.log('video is playing from user ' + this.currentUser);
-          this.socket.socketInstance.emit('play-video', {username: this.currentUser});
+          this.socket.socketInstance.emit('play-video', {username: this.currentUser, roomId: this.roomId});
       } else {
           console.log(' ' + this.anotherUser + ' != ' + this.currentUser);
           this.anotherUser = this.currentUser;
@@ -119,8 +120,10 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   onPlayEvent() {
     this.socket.socketInstance.on('onplay event', data => {
-      this.anotherUser = data.username
-      this.playVid();
+      if (data.roomId === this.roomId) {
+          this.anotherUser = data.username
+          this.playVid();
+      }
     });
   }
 
@@ -139,7 +142,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     if (this.anotherUser === this.currentUser){
       if (!this.video.seeking) {  // if seeking don't send pause event to server
         console.log('video is paused by user ' + this.currentUser);
-        this.socket.socketInstance.emit('pause-video', {username: this.currentUser});
+        this.socket.socketInstance.emit('pause-video', {username: this.currentUser, roomId: this.roomId});
       }
     } else {
       console.log(' ' + this.anotherUser + ' != ' + this.currentUser);
@@ -149,8 +152,10 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   onPauseEvent() {
     this.socket.socketInstance.on('onpause event', data => {
-      this.anotherUser = data.username
-      this.pauseVid();
+      if (data.roomId === this.roomId) {
+          this.anotherUser = data.username
+          this.pauseVid();
+      }
     });
   }
 
@@ -158,7 +163,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     if (this.anotherUser === this.currentUser){
       console.log(this.video.currentTime);
       this.socket.socketInstance.emit('change-video-position',
-        {current_position: this.video.currentTime, username: this.currentUser});
+        {current_position: this.video.currentTime, username: this.currentUser, roomId: this.roomId});
     } else {
       console.log(' ' + this.anotherUser + ' != ' + this.currentUser);
       this.anotherUser = this.currentUser;
@@ -168,7 +173,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   changeVideoPositionEvent() {
     this.socket.socketInstance.on('change video position event', data => {
         console.log('difference in positions (sec): ' + Math.abs((data.current_position - this.video.currentTime)))
-        if ((this.video.currentTime !== data.current_position) && data.username !== this.currentUser) {
+        if ((this.video.currentTime !== data.current_position) && data.username !== this.currentUser && data.roomId === this.roomId) {
             this.anotherUser = data.username;
             console.log('video.currentTime: ' + this.video.currentTime + ' current_position: ' + data.current_position);
             this.video.currentTime = data.current_position;
