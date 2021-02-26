@@ -3,9 +3,24 @@
   <div class="media-body">
     <div class="film-metadata">
       <video (play)="playVideo()" (pause)="pauseVideo()" (seeked)="onSeeked()"
-             id="videoId" width="600" height="338" controls="controls" [src]="videoItem.src">
-<!--        <source src="">-->
+             id="videoId" [src]="videoItem.src">
+<!--       <video (play)="playVideo()" (pause)="pauseVideo()" (seeked)="onSeeked()"-->
+<!--             id="videoId" width="600" height="338">-->
+<!--        <source src="Z://Documents//pocorn.mp4" type="video/mp4">-->
       </video>
+
+      <div id="player_controls">
+
+        <input type="image" src="assets/images/play.png" (click)="playVideo()" id="play_button">
+        <input type="image" src="assets/images/pause.png" (click)="pauseVideo()" id="pause_button">
+
+<!--        <input type="image" src="assets/images/full_screen.png" (click)="fullScreenVid()" id="full_screen_button">-->
+
+        <img src="assets/images/volume.png" id="volume_img">
+        <input type="range" id="change_vol" (change)="changeVolume()" step="0.05" min="0" max="1" value="1">
+
+      </div>
+
     </div>
   </div>
 <!--  </article>-->
