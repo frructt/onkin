@@ -1,0 +1,110 @@
+@font-face {
+    font-family: DXRigraf-SemiBold;
+    src: url("../../assets/font/DXRigraf-SemiBold.otf") format("truetype");
+}
+
+@media (min-width: 768px) {
+
+  .mall {
+    margin-top: 10rem !important;
+    margin-left: 20%;
+    margin-right: 15%;
+    margin-bottom: 20%;
+  }
+
+  .fill-room-body {
+  }
+
+  h1 {
+    //font-family: DXRigraf-SemiBold, serif;
+    //font-size: 4rem;
+    padding: 0.3em 0 0.2em 0;
+    font-size: 4rem;
+  }
+
+  .fill-room-container {
+    background-color: #E5E5E5;
+    font-family: DXRigraf-SemiBold, serif;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    width: 50em;
+    height: 25em;
+
+    border-radius: 20px;
+
+    padding-left: 4%;
+  }
+
+  .fill-room-sub-container {
+    margin: 2rem 2rem;
+  }
+
+  .fill-room-group {
+    padding-right: 3rem !important;
+    margin-bottom: 1rem;
+  }
+
+  .fill-room-border-form {
+    border-style: solid;
+    border-color: #a7a7a7;
+    border-width: 0.3rem 0.9rem 0.3rem 0.9rem;
+    border-radius: 0.1rem;
+  }
+
+  .fill-room-form-control {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.5;
+    background-color: #ffffff;
+    background-clip: padding-box;
+    color: #495057;
+    transition: border-color 0.15s ease-in-out;
+  }
+
+  .fill-room-form-control:focus {
+    border-color: #000000;
+    color:#000000;
+    outline: 0;
+  }
+
+  .fill-room-btn {
+    font-size: 1.5rem;
+
+    height: 2em;
+    width: 10rem;
+
+    margin-top: 1em;
+
+    color: #000000;
+    background-color: #ffffff;
+    border-color: #000000;
+  }
+
+  .fill-room-btn-border-form {
+    border-style: solid;
+    border-color: #000000;
+    border-width: 0.2rem;
+    border-radius: 0.1rem;
+  }
+
+  .fill-room-btn:focus {
+    color: #E5E5E5;
+    background-color: #000000;
+
+    //outline: 0;
+    //box-shadow: 0 0 0 0.1rem #000000;
+  }
+
+  .fill-room-btn:hover {
+    background-color: #d7d7d7;
+    //color: #ffffff;
+    //background-color: #333333;
+  }
+}

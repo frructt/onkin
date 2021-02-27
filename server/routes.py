@@ -68,8 +68,19 @@ def users():
 @token_required
 def generate_new_room():
     json_data = request.json
-    room_name = Room.add_new_room(json_data["username"])
-    return jsonify({"roomName": room_name})
+    room_id = Room.add_new_room(json_data["username"])
+    return jsonify({"roomId": room_id})
+
+
+@app.route("/api/fillRoom", methods=["POST"])
+@token_required
+def fill_room():
+    json_data = request.json
+    bool_ = Room.add_user_to_room(json_data["roomId"], json_data["username"])
+    if bool_:
+        return jsonify({"result": bool_})
+    else:
+        return make_response({"result": "roomId doesn't exist"}, 404)
 
 
 @app.route("/api/getVideoName")
@@ -88,7 +99,7 @@ def handle_message(data):
 @socketio.on('message', namespace='/api')
 def message(data):
     print(f"\n\n{data}\n\n")
-    send({"msg": data["msg"], "username": data["username"],
+    send({"msg": data["msg"], "username": data["username"], "roomId": data["roomId"],
           "time_stamp": datetime.datetime.now().strftime("%b-%d %H:%M%S.%f")}, broadcast=True)
 
 
@@ -111,19 +122,19 @@ def leave(data):
 @socketio.on('play-video', namespace='/api')
 def play_video(data):
     print(f"\n\n{data}\n\n")
-    emit("onplay event", {"username": data["username"]}, broadcast=True)
+    emit("onplay event", {"username": data["username"], "roomId": data["roomId"]}, broadcast=True)
 
 
 @socketio.on('pause-video', namespace='/api')
 def pause_video(data):
     print(f"\n\n{data}\n\n")
-    emit("onpause event", {"username": data["username"]}, broadcast=True)
+    emit("onpause event", {"username": data["username"], "roomId": data["roomId"]}, broadcast=True)
 
 
 @socketio.on('change-video-position', namespace='/api')
 def change_video_position(data):
     emit("change video position event",
-         {"current_position": data["current_position"], "username": data["username"]},
+         {"current_position": data["current_position"], "username": data["username"], "roomId": data["roomId"]},
          broadcast=True)
 
 

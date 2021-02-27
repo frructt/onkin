@@ -11,6 +11,7 @@ import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { MockedComponent } from './mocked';
 import { PlayerComponent } from './player';
+import { FillRoomComponent } from './fillRoom';
 import {SocketioService} from '@app/_services';
 
 import {VgCoreModule} from '@videogular/ngx-videogular/core';
@@ -32,6 +33,7 @@ import {VgBufferingModule} from '@videogular/ngx-videogular/buffering';
     ],
     declarations: [
         AppComponent,
+        FillRoomComponent,
         HomeComponent,
         LoginComponent,
         MockedComponent,

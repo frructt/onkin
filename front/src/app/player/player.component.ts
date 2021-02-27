@@ -48,7 +48,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.videoService.getVideo().subscribe(p => {
       this.videoName = p;
     });
-    this.videoService.streamVideo('pocorn.mp4').subscribe(
+    this.videoService.streamVideo('a.mp4').subscribe(
       (response: HttpResponse<Blob>) => {
         this.videoItem = {
           name: 'Video one',
@@ -60,16 +60,12 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
       error => console.log('oops!!!', error)
     );
     this.video = document.getElementById('videoId');
-    this.video.controls = false;
-
     this.onPauseEvent();
     this.onPlayEvent();
     this.changeVideoPositionEvent();
     this.BroadcastMessages();
 
     this.openChat();
-    this.changeVolume();
-    this.fullScreenVid();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -111,7 +107,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     } else {
         console.log('video is already played for user ' + this.currentUser);
     }
-  }
+    }
 
 
   playVideo() {
@@ -186,14 +182,6 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
             console.log('position in the same');
         }
     })
-  }
-
-  changeVolume() {
-    this.video.volume = document.getElementById("change_vol").nodeValue;
-  }
-
-  fullScreenVid() {
-    this.video.fullscreenchange;
   }
 
   openChat () {
