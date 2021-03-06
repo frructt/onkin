@@ -8,8 +8,18 @@ from flask_socketio import send, emit, join_room, leave_room, disconnect
 # from server.forms import RegistrationForm, LoginForm
 from sqlalchemy.exc import SQLAlchemyError
 
-from server import app, db, file_upload, socketio, ROOMS
+from server import app, cross_origin, db, file_upload, socketio, ROOMS
 from server.models import User, DemoFileStreamTable1, Room
+
+
+# @app.after_request
+# def after_request(response):
+#     white_origin = ['http://localhost:4200', 'http://localhost:5000']
+#     if request.headers['Origin'] in white_origin:
+#         response.headers['Access-Control-Allow-Origin'] = request.headers['Origin']
+#         response.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
+#         response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+#     return response
 
 
 # decorator
@@ -61,7 +71,10 @@ def home():
 @token_required
 def users():
     users_ = User.query.all()
-    return jsonify([{"username": user.username} for user in users_])
+    response = jsonify([{"username": user.username} for user in users_])
+    # response.headers.add('Access-Control-Allow-Origin', '*')
+    # response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    return response
 
 
 @app.route("/api/generateNewRoom", methods=["POST"])
@@ -87,7 +100,7 @@ def fill_room():
 @token_required
 def get_video_name():
     video = DemoFileStreamTable1.query.first()
-    return jsonify({"video_name": video.name})
+    return jsonify({"name": video.name, "fileName": video.my_file__file_name})
 
 
 @socketio.on('new-message', namespace='/api')
@@ -139,6 +152,7 @@ def change_video_position(data):
 
 
 @app.route('/api/uploads/<filename>')
+@cross_origin(origin='*', headers=['Content-Type'], send_wildcard=True)
 def uploads(filename):
     file = DemoFileStreamTable1.query.filter_by(my_file__file_name=filename).first()
     return file_upload.stream_file(file, filename="my_file")

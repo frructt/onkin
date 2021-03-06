@@ -4,7 +4,7 @@ import { ChatMessageDto } from '@app/_models'
 import {HttpResponse} from '@angular/common/http';
 import {NgForm} from '@angular/forms'
 import {User} from '@app/_models';
-import {first} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import { RoomService } from '@app/_services';
 
 
@@ -19,7 +19,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   // socket: SocketioService;
   currentUser: string;
   anotherUser: string;
-  videoName: string;
+  // videoName: string;
   videoItem;
   data;
   video;
@@ -28,7 +28,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   // message: string;
   newMessage = '';
   messages: ChatMessageDto[] = [];
-  roomName: string;
+  roomId: string;
 
 
   constructor(private videoService: VideoService,
@@ -39,26 +39,40 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.currentUser = this.authenticationService.currentUserValue.username;
     this.anotherUser = this.authenticationService.currentUserValue.username;
     this.isPlaying = false;
+    this.roomId = this.authenticationService.currentUserValue.roomId
   }
 
   ngOnInit() {
-    this.roomService.generateNewRoom(this.currentUser).subscribe(data => {
-        this.roomName = data.roomName;
-    });
-    this.videoService.getVideo().subscribe(p => {
-      this.videoName = p;
-    });
-    this.videoService.streamVideo('a.mp4').subscribe(
-      (response: HttpResponse<Blob>) => {
-        this.videoItem = {
-          name: 'Video one',
-          src: response.url,
-          type: 'video/mp4'
-        };
-        console.log('this.videoItem.src')
-      },
-      error => console.log('oops!!!', error)
-    );
+    this.videoService.getVideo()
+      .pipe(
+        switchMap(data =>
+          this.videoService.streamVideo(data.fileName)
+            .pipe(
+              map(response => (
+                this.videoItem = {
+                name: 'video name',
+                src: response.url,
+                type: 'video/mp4'
+                }))
+            )
+      )
+    ).subscribe(result => console.log('merged: ', result))
+
+
+    // this.videoService.getVideo().subscribe(p => {
+    //   this.videoName = p;
+    // });
+    // this.videoService.streamVideo(this.videoName).subscribe(
+    //   (response: HttpResponse<Blob>) => {
+    //     this.videoItem = {
+    //       name: 'Video one',
+    //       src: response.url,
+    //       type: 'video/mp4'
+    //     };
+    //     console.log('this.videoItem.src')
+    //   },
+    //   error => console.log('oops!!!', error)
+    // );
     this.video = document.getElementById('videoId');
     this.onPauseEvent();
     this.onPlayEvent();
@@ -79,8 +93,8 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   BroadcastMessages() {
     this.socket.socketInstance.on('message', (data) => {
      if (data) {
-        if (data.username) {
-            const chatMessageDto = new ChatMessageDto(data.username, data.msg, data.time_stamp)
+        if (data.roomId === this.roomId) {
+            const chatMessageDto = new ChatMessageDto(data.username, data.msg, data.roomId, data.time_stamp)
             this.messages.push(chatMessageDto)
         } else {
             // printSysMsg(data.msg)
@@ -91,7 +105,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   sendMessage(sendForm: NgForm) {
      // const chatMessageDto = new ChatMessageDto(this.currentUser, sendForm.value.newMessage, '')
-     this.socket.socketInstance.emit('message', {username: this.currentUser, msg: sendForm.value.newMessage});
+     this.socket.socketInstance.emit('message', {username: this.currentUser, msg: sendForm.value.newMessage, roomId: this.roomId});
      sendForm.controls.newMessage.reset();
   }
 
@@ -114,7 +128,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
       this.isPlaying = true;
       if (this.anotherUser === this.currentUser){
           console.log('video is playing from user ' + this.currentUser);
-          this.socket.socketInstance.emit('play-video', {username: this.currentUser});
+          this.socket.socketInstance.emit('play-video', {username: this.currentUser, roomId: this.roomId});
       } else {
           console.log(' ' + this.anotherUser + ' != ' + this.currentUser);
           this.anotherUser = this.currentUser;
@@ -123,8 +137,10 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   onPlayEvent() {
     this.socket.socketInstance.on('onplay event', data => {
-      this.anotherUser = data.username
-      this.playVid();
+      if (data.roomId === this.roomId) {
+          this.anotherUser = data.username
+          this.playVid();
+      }
     });
   }
 
@@ -143,7 +159,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     if (this.anotherUser === this.currentUser){
       if (!this.video.seeking) {  // if seeking don't send pause event to server
         console.log('video is paused by user ' + this.currentUser);
-        this.socket.socketInstance.emit('pause-video', {username: this.currentUser});
+        this.socket.socketInstance.emit('pause-video', {username: this.currentUser, roomId: this.roomId});
       }
     } else {
       console.log(' ' + this.anotherUser + ' != ' + this.currentUser);
@@ -153,8 +169,10 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   onPauseEvent() {
     this.socket.socketInstance.on('onpause event', data => {
-      this.anotherUser = data.username
-      this.pauseVid();
+      if (data.roomId === this.roomId) {
+          this.anotherUser = data.username
+          this.pauseVid();
+      }
     });
   }
 
@@ -162,7 +180,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     if (this.anotherUser === this.currentUser){
       console.log(this.video.currentTime);
       this.socket.socketInstance.emit('change-video-position',
-        {current_position: this.video.currentTime, username: this.currentUser});
+        {current_position: this.video.currentTime, username: this.currentUser, roomId: this.roomId});
     } else {
       console.log(' ' + this.anotherUser + ' != ' + this.currentUser);
       this.anotherUser = this.currentUser;
@@ -172,7 +190,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   changeVideoPositionEvent() {
     this.socket.socketInstance.on('change video position event', data => {
         console.log('difference in positions (sec): ' + Math.abs((data.current_position - this.video.currentTime)))
-        if ((this.video.currentTime !== data.current_position) && data.username !== this.currentUser) {
+        if ((this.video.currentTime !== data.current_position) && data.username !== this.currentUser && data.roomId === this.roomId) {
             this.anotherUser = data.username;
             console.log('video.currentTime: ' + this.video.currentTime + ' current_position: ' + data.current_position);
             this.video.currentTime = data.current_position;

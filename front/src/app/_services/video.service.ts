@@ -8,10 +8,10 @@ export class VideoService {
     constructor(private http: HttpClient) { }
 
     getVideo() {
-        return this.http.get<string>(`${environment.apiUrl}/getVideoName`);
+        return this.http.get<any>(`${environment.apiUrl}/getVideoName`);
     }
 
-  streamVideo(videoName: string) {
+  streamVideo(videoName: any) {
       return this.http.get<Blob>(`${environment.apiUrl}/uploads/${videoName}`, { observe: 'response', responseType: 'blob' as 'json' });
     }
 }
