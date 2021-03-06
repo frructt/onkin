@@ -30,6 +30,17 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   messages: ChatMessageDto[] = [];
   roomId: string;
 
+  videoControls;
+  playpause;
+  stop;
+  mute;
+  volinc;
+  voldec
+  progress;
+  progressBar;
+  fullscreen;
+  videoContainer;
+
 
   constructor(private videoService: VideoService,
               private authenticationService: AuthenticationService,
@@ -39,7 +50,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.currentUser = this.authenticationService.currentUserValue.username;
     this.anotherUser = this.authenticationService.currentUserValue.username;
     this.isPlaying = false;
-    this.roomId = this.authenticationService.currentUserValue.roomId
+    this.roomId = this.authenticationService.currentUserValue.roomId;
   }
 
   ngOnInit() {
@@ -58,22 +69,48 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
       )
     ).subscribe(result => console.log('merged: ', result))
 
-
-    // this.videoService.getVideo().subscribe(p => {
-    //   this.videoName = p;
-    // });
-    // this.videoService.streamVideo(this.videoName).subscribe(
-    //   (response: HttpResponse<Blob>) => {
-    //     this.videoItem = {
-    //       name: 'Video one',
-    //       src: response.url,
-    //       type: 'video/mp4'
-    //     };
-    //     console.log('this.videoItem.src')
-    //   },
-    //   error => console.log('oops!!!', error)
-    // );
+    this.videoContainer = document.getElementById('videoContainer');
     this.video = document.getElementById('videoId');
+    this.video.controls = false;
+    this.videoControls = document.getElementById('player-controls');
+
+    this.playpause = document.getElementById('playpause');
+    this.stop = document.getElementById('stop');
+    this.mute = document.getElementById('mute');
+    this.volinc = document.getElementById('volinc');
+    this.voldec = document.getElementById('voldec');
+    this.progress = document.getElementById('progress');
+    this.progressBar = document.getElementById('progress-bar');
+    this.fullscreen = document.getElementById('fs');
+
+    // this.playpause.addEventListener('click', this.playVid());
+    // this.mute.addEventListener('click', this.muteVideo());
+    // this.volinc.addEventListener('click', this.volumeInc());
+    // this.voldec.addEventListener('click', this.volumeDec());
+    // this.video.addEventListener('loadedmetadata', this.setDuration());
+    // this.video.addEventListener('timeupdate', this.progressBarUpdate());
+    //
+    // var fullScreenEnabled = !!(document.fullscreenEnabled);
+    // if (!fullScreenEnabled) {
+    //   this.fullscreen.style.display = 'none';
+    // }
+    // this.fullscreen.addEventListener('click', this.changeFullscreen());
+
+    // document.addEventListener('fullscreenchange', this.documentChangeFullScreenListener());
+
+    this.videoControls.setAttribute('data-state', 'visible');
+    var supportsProgress = (document.createElement('progress').max != undefined);
+    if (!supportsProgress) this.progress.setAttribute('data-state', 'fake');
+
+    this.video.addEventListener('play', this.changeButtonState('playpause'), false);
+    this.video.addEventListener('pause', this.changeButtonState('playpause'), false);
+    this.mute.addEventListener('click', this.muteListener());
+    // this.playpause.addEventListener('click', this.onPlayPauseEvent());
+    this.video.addEventListener('volumechange', this.checkVolume(''), false);
+    // this.progress.addEventListener('click', this.progressEventListener());
+
+    this.changeVolume();
+    this.fullScreenVid();
     this.onPauseEvent();
     this.onPlayEvent();
     this.changeVideoPositionEvent();
@@ -121,7 +158,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     } else {
         console.log('video is already played for user ' + this.currentUser);
     }
-    }
+  }
 
 
   playVideo() {
@@ -176,6 +213,11 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
+  onPlayPauseEvent(e) {
+    if (this.video.paused || this.video.ended) this.onPlayEvent();
+    else this.onPauseEvent();
+  }
+
   onSeeked() {
     if (this.anotherUser === this.currentUser){
       console.log(this.video.currentTime);
@@ -201,6 +243,121 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
         }
     })
   }
+
+  progressEventListener(e) {
+   var pos = (e.pageX - (e.offsetLeft + e.offsetParent.offsetLeft)) / e.offsetWidth;
+   this.video.currentTime = pos * this.video.duration;
+  }
+
+  checkVolume(dir) {
+    if (dir != '') {
+      var currentVolume = Math.floor(this.video.volume * 10) / 10;
+      if (dir === '+') {
+        if (currentVolume < 1) this.video.volume += 0.1;
+      }
+      else if (dir === '-') {
+        if (currentVolume > 0) this.video.volume -= 0.1;
+      }
+
+      this.video.muted = currentVolume <= 0;
+    }
+      this.changeButtonState('mute');
+  }
+
+  muteListener() {
+    this.video.muted = !this.video.muted;
+    this.changeButtonState('mute');
+  }
+
+  changeButtonState(type) {
+    if (type == 'playpause') {
+        if (this.video || this.video.ended) {
+          this.playpause.setAttribute('data-state', 'play');
+        }
+        else {
+          this.playpause.setAttribute('data-state', 'pause');
+        }
+      }
+      else if (type == 'mute') {
+        this.mute.setAttribute('data-state', this.video.muted ? 'unmute' : 'mute');
+      }
+  }
+
+  documentChangeFullScreenListener() {
+    this.setFullScreenData(!!(document.fullscreen || document.fullscreenElement));
+  }
+
+  skipAhead(e) {
+    var pos = (e.pageX - e.offsetLeft) / e.offsetWidth;
+    this.video.currentTime = pos * this.video.duration;
+  }
+
+  changeFullscreen() {
+    this.handleFullScreen();
+  }
+
+  handleFullScreen() {
+    if (this.isFullScreen()) {
+      if (document.exitFullscreen) document.exitFullscreen();
+      this.setFullScreenData(false);
+    }
+    else {
+      if (this.videoContainer.requestFullscreen) this.videoContainer.requestFullscreen();
+      this.setFullScreenData(true);
+    }
+  }
+
+  setFullScreenData (state) {
+    this.videoContainer.setAttribute('data-fullscreen', !!state);
+  }
+
+  isFullScreen() {
+    return !!(document.fullscreen || document.fullscreenElement);
+  }
+
+  progressBarUpdate() {
+    if (!this.progress.getAttribute('max')) this.progress.setAttribute('max', this.video.duration);
+    this.progress.value = this.video.currentTime;
+    this.progressBar.style.width = Math.floor((this.video.currentTime / this.video.duration) * 100) + '%';
+  }
+
+  setDuration() {
+    this.progress.setAttribute('max', this.video.duration);
+  }
+
+  volumeInc() {
+    this.alterVolume('+');
+  }
+
+  volumeDec() {
+    this.alterVolume('-');
+  }
+
+  alterVolume(dir) {
+
+    this.checkVolume(dir);
+
+    // var currentVolume = Math.floor(this.video.volume * 10) / 10;
+    // if (dir === '+') {
+    //   if (currentVolume < 1) this.video.volume += 0.1;
+    // }
+    // else if (dir === '-') {
+    //   if (currentVolume > 0) this.video.volume -= 0.1;
+    // }
+  }
+
+  muteVideo() {
+    this.video.muted = !this.video.muted;
+  }
+
+  changeVolume() {
+    this.video.volume = document.getElementById("change_vol").nodeValue;
+  }
+
+  fullScreenVid() {
+    this.video.fullscreenchange;
+  }
+
 
   openChat () {
     document.getElementById('chatForm').style.display = 'block';
