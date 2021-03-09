@@ -2,7 +2,7 @@
 .main-container {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -13,7 +13,8 @@
 
 #videoId {
   width: 800px;
-  height: 600px;
+  //height: 600px;
+  margin-right: 20px;
 }
 
 .chat-popup {
@@ -37,13 +38,20 @@ figure {
   height: 100%;
   margin: 1.25rem auto;
   padding: 1.051%;
-  background-color: #666;
+  //background-color: #090e15;
 }
+
 
 .controls {
   width: 100%;
   height: 8.0971659919028340080971659919028%;
   position: relative;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+
+  //padding-bottom: 31px;
 }
 
 .controls[data-state=hidden] {
@@ -51,12 +59,12 @@ figure {
 }
 
 .controls[data-state=visible] {
-  display: block;
+  //display: block;
 }
 
 .controls > * {
-  float: left;
-  width: 3.90625%;
+  //float: left;
+  //width: 3.90625%;
   height: 100%;
   margin-left: 0.1953125%;
   display: block;
@@ -74,9 +82,8 @@ figure {
 .controls button {
   border: none;
   cursor: pointer;
-  background: transparent;
   background-size: contain;
-  background-repeat: no-repeat;
+  background: transparent no-repeat;
 }
 
 .controls button:hover, .controls button:focus {
@@ -85,18 +92,26 @@ figure {
 
 .controls button[data-state="play"] {
   background-image: url(~src/assets/images/play.png);
+  height: 31px;
+  width: 28px;
 }
 
 .controls button[data-state="pause"] {
   background-image: url(~src/assets/images/pause.png);
+  width: 28px;
+  height: 30px;
 }
 
 .controls button[data-state="go-fullscreen"] {
   background-image: url(~src/assets/images/full_screen.png);
+  width: 39px;
+  height: 31px;
 }
 
 .controls button[data-state="mute"] {
   background-image: url(~src/assets/images/volume.png);
+  width: 35px;
+  height: 27px;
 }
 
 .controls progress {

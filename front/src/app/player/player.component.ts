@@ -44,8 +44,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(private videoService: VideoService,
               private authenticationService: AuthenticationService,
-              private socket: SocketioService,
-              private roomService: RoomService) {
+              private socket: SocketioService) {
     socket.connect();
     this.currentUser = this.authenticationService.currentUserValue.username;
     this.anotherUser = this.authenticationService.currentUserValue.username;
@@ -102,21 +101,45 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     var supportsProgress = (document.createElement('progress').max != undefined);
     if (!supportsProgress) this.progress.setAttribute('data-state', 'fake');
 
-    this.video.addEventListener('play', this.changeButtonState('playpause'), false);
-    this.video.addEventListener('pause', this.changeButtonState('playpause'), false);
-    this.mute.addEventListener('click', this.muteListener());
+    // function changeButtonState(type) {
+    //   if (type == 'playpause') {
+    //     if (this.video || this.video.ended) {
+    //       this.playpause.setAttribute('data-state', 'play');
+    //     }
+    //     else {
+    //       this.playpause.setAttribute('data-state', 'pause');
+    //     }
+    //   }
+    //   else if (type == 'mute') {
+    //     this.mute.setAttribute('data-state', this.video.muted ? 'unmute' : 'mute');
+    //   }
+    // }
+
+    // this.video.addEventListener('play', function () {
+    //   this.changeButtonState('playpause')
+    // }, false);
+
+    // this.video.addEventListener('play', this.changeButtonState('playpause'), false);
+
+
+    // this.video.addEventListener('pause', this.changeButtonState('playpause'), false);
+    // this.mute.addEventListener('click', this.muteListener());
     // this.playpause.addEventListener('click', this.onPlayPauseEvent());
-    this.video.addEventListener('volumechange', this.checkVolume(''), false);
+    // this.video.addEventListener('volumechange', this.checkVolume(''), false);
     // this.progress.addEventListener('click', this.progressEventListener());
 
-    this.changeVolume();
-    this.fullScreenVid();
+    // this.changeVolume();
+    // this.fullScreenVid();
     this.onPauseEvent();
     this.onPlayEvent();
     this.changeVideoPositionEvent();
     this.BroadcastMessages();
 
     this.openChat();
+  }
+
+  ngAfterViewInit() {
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -162,14 +185,15 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
 
   playVideo() {
-      this.isPlaying = true;
-      if (this.anotherUser === this.currentUser){
-          console.log('video is playing from user ' + this.currentUser);
-          this.socket.socketInstance.emit('play-video', {username: this.currentUser, roomId: this.roomId});
-      } else {
-          console.log(' ' + this.anotherUser + ' != ' + this.currentUser);
-          this.anotherUser = this.currentUser;
-      }
+    this.video.play();
+    this.isPlaying = true;
+    if (this.anotherUser === this.currentUser){
+        console.log('video is playing from user ' + this.currentUser);
+        this.socket.socketInstance.emit('play-video', {username: this.currentUser, roomId: this.roomId});
+    } else {
+        console.log(' ' + this.anotherUser + ' != ' + this.currentUser);
+        this.anotherUser = this.currentUser;
+    }
   }
 
   onPlayEvent() {
@@ -192,6 +216,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   pauseVideo() {
+    this.video.pause();
     this.isPlaying = false;
     if (this.anotherUser === this.currentUser){
       if (!this.video.seeking) {  // if seeking don't send pause event to server
@@ -214,8 +239,8 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onPlayPauseEvent(e) {
-    if (this.video.paused || this.video.ended) this.onPlayEvent();
-    else this.onPauseEvent();
+    if (this.video.paused || this.video.ended) this.playVideo();
+    else this.pauseVideo();
   }
 
   onSeeked() {
@@ -245,13 +270,13 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   progressEventListener(e) {
-   var pos = (e.pageX - (e.offsetLeft + e.offsetParent.offsetLeft)) / e.offsetWidth;
-   this.video.currentTime = pos * this.video.duration;
+    let pos = (e.pageX - (e.offsetLeft + e.offsetParent.offsetLeft)) / e.offsetWidth;
+    this.video.currentTime = pos * this.video.duration;
   }
 
   checkVolume(dir) {
     if (dir != '') {
-      var currentVolume = Math.floor(this.video.volume * 10) / 10;
+      let currentVolume = Math.floor(this.video.volume * 10) / 10;
       if (dir === '+') {
         if (currentVolume < 1) this.video.volume += 0.1;
       }
@@ -271,7 +296,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   changeButtonState(type) {
     if (type == 'playpause') {
-        if (this.video || this.video.ended) {
+        if (this.video.paused || this.video.ended) {
           this.playpause.setAttribute('data-state', 'play');
         }
         else {
