@@ -13,6 +13,7 @@
     "license": "MIT",
     "dependencies": {
         "@angular/animations": "^11.0.7",
+        "@angular/cdk": "^11.2.4",
         "@angular/common": "^11.0.7",
         "@angular/compiler": "^11.0.7",
         "@angular/core": "^11.0.7",
@@ -24,6 +25,7 @@
         "@videogular/ngx-videogular": "^2.1.0",
         "base64url": "^3.0.1",
         "bootstrap": "^4.5.3",
+        "ngx-scrollbar": "^7.5.4",
         "rxjs": "~6.6.3",
         "socket.io-client": "^3.0.5",
         "tslib": "^1.14.1",

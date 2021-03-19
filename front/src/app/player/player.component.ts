@@ -6,6 +6,7 @@ import {NgForm} from '@angular/forms'
 import {User} from '@app/_models';
 import {map, switchMap} from 'rxjs/operators';
 import { RoomService } from '@app/_services';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 
 
 @Component({
@@ -29,6 +30,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   newMessage = '';
   messages: ChatMessageDto[] = [];
   roomId: string;
+  dateToday: number
 
   videoControls;
   playpause;
@@ -98,7 +100,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     // document.addEventListener('fullscreenchange', this.documentChangeFullScreenListener());
 
     this.videoControls.setAttribute('data-state', 'visible');
-    var supportsProgress = (document.createElement('progress').max != undefined);
+    let supportsProgress = (document.createElement('progress').max != undefined);
     if (!supportsProgress) this.progress.setAttribute('data-state', 'fake');
 
     // function changeButtonState(type) {
@@ -154,7 +156,8 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.socket.socketInstance.on('message', (data) => {
      if (data) {
         if (data.roomId === this.roomId) {
-            const chatMessageDto = new ChatMessageDto(data.username, data.msg, data.roomId, data.time_stamp)
+            data.timestamp = this.getDate()
+            const chatMessageDto = new ChatMessageDto(data.username, data.msg, data.roomId, data.timestamp)
             this.messages.push(chatMessageDto)
         } else {
             // printSysMsg(data.msg)
@@ -163,15 +166,17 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  sendMessage(sendForm: NgForm) {
-     // const chatMessageDto = new ChatMessageDto(this.currentUser, sendForm.value.newMessage, '')
-     this.socket.socketInstance.emit('message', {username: this.currentUser, msg: sendForm.value.newMessage, roomId: this.roomId});
-     sendForm.controls.newMessage.reset();
+  getDate() {
+    return Date.now();
   }
 
-  // sendMessage(sendForm: NgForm) {
-  //   console.log({username: this.currentUser, msg: sendForm.value.message})
-  // }
+  sendMessage(sendForm: NgForm) {
+     // const chatMessageDto = new ChatMessageDto(this.currentUser, sendForm.value.newMessage, '')
+    if (sendForm.value.newMessage.trim().length) {
+      this.socket.socketInstance.emit('message', {username: this.currentUser, msg: sendForm.value.newMessage, roomId: this.roomId});
+      sendForm.controls.newMessage.reset();
+    }
+  }
 
   // Play video function
   playVid() {

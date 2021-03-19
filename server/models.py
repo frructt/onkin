@@ -35,6 +35,16 @@ class User(db.Model, UserMixin):
         return str(self.id)
 
     @staticmethod
+    def delete_all():
+        try:
+            User.query.delete()
+            db.session.commit()
+            db.session.close()
+        except SQLAlchemyError as e:
+            error = str(e.__dict__['orig'])
+            print(error)
+
+    @staticmethod
     def delete_user(username):
         try:
             User.query.filter_by(username=username).delete()
@@ -57,6 +67,16 @@ class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(4), nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
+
+    @staticmethod
+    def delete_all():
+        try:
+            Room.query.delete()
+            db.session.commit()
+            db.session.close()
+        except SQLAlchemyError as e:
+            error = str(e.__dict__['orig'])
+            print(error)
 
     @staticmethod
     def delete_room(name):
@@ -119,14 +139,14 @@ class Room(db.Model):
             print(error)
 
 
-class Film(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    year = db.Column(db.String(4), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-
-    def __ref__(self):
-        return f"Film('{self.title}', '{self.year}', '{self.description}')"
+# class Film(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     title = db.Column(db.String(100), nullable=False)
+#     year = db.Column(db.String(4), nullable=False)
+#     description = db.Column(db.Text, nullable=False)
+#
+#     def __ref__(self):
+#         return f"Film('{self.title}', '{self.year}', '{self.description}')"
 
 
 class UploadedFile(db.Model):
@@ -211,3 +231,5 @@ class DemoFileStreamTable1(db.Model):
 
 
 db.create_all()
+User.delete_all()
+Room.delete_all()
