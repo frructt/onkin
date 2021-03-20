@@ -26,6 +26,9 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   video;
   playbackBar;
   playPauseBtn;
+  volumeUpMuteBtn;
+  onOffFullScreenBtn;
+  videoFrame;
   // video = document.createElement('video');
   isPlaying: boolean;
   // message: string;
@@ -64,6 +67,10 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.video = document.getElementById('videoId');
     this.playbackBar = document.querySelector('.playback_bar');
     this.playPauseBtn = document.getElementById('play-pause');
+    this.volumeUpMuteBtn = document.getElementById('up-mute');
+    this.onOffFullScreenBtn = document.getElementById('on-off');
+    this.videoFrame = document.querySelector('.c_video');
+
 
     this.onPauseEvent();
     this.onPlayEvent();
@@ -119,8 +126,59 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  toggleVolumeUpMute($event: MouseEvent) {
+    if (this.video.volume === 0) {
+      this.volumeUpMuteBtn.className = 'mute';
+      this.video.volume = 1
+    }
+    else {
+      this.volumeUpMuteBtn.className = 'up';
+      this.video.volume = 0
+    }
+  }
+
+  toggleFullScreen($event: MouseEvent) {
+    if (this.onOffFullScreenBtn.className === 'off') {
+      this.onFullScreen(this.videoFrame)
+      this.onOffFullScreenBtn.className = 'on';
+    }
+    else {
+      this.offFullScreen(this.videoFrame)
+      this.onOffFullScreenBtn.className = 'off';
+    }
+  }
+
+  onFullScreen(element) {
+    if (element.requestFullscreen) {
+      element.requestFullscreen()
+        .catch(err => {
+          alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        });
+    } else if (element.msRequestFullscreen) {
+      element.msRequestFullscreen();
+    } else if (element.mozRequestFullScreen) {
+      element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen();
+    }
+  }
+
+  offFullScreen(element) {
+    if (document.exitFullscreen) {
+      document.exitFullscreen()
+        .then(() => console.log('Document Exited from Full screen mode'))
+        .catch((err) => console.error(err));
+    } else if (element.msExitFullscreen) {
+      element.msExitFullscreen();
+    } else if (element.mozCancelFullScreen) {
+      element.mozCancelFullScreen();
+    } else if (element.webkitExitFullscreen) {
+      element.webkitExitFullscreen();
+    }
+  }
+
   playbackListener(ev) {
-    let barPos = this.video.currentTime / this.video.duration;
+    const barPos = this.video.currentTime / this.video.duration;
     this.playbackBar.style.width = barPos * 100 + '%';
     if (this.video.ended) {
       this.playPauseBtn.className = 'play';

@@ -11,7 +11,13 @@
                                 <div class="playback_bar"></div>
                             </div>
                             <div class="buttons">
-                                <button id="play-pause" (click)="togglePlayPause($event)"></button>
+                              <div class="left">
+                                <button id="play-pause" class="play" (click)="togglePlayPause($event)"></button>
+                                <button id="up-mute" class="up" (click)="toggleVolumeUpMute($event)"></button>
+                              </div>
+                              <div class="right">
+                                <button id="on-off" class="off" (click)="toggleFullScreen($event)"></button>
+                              </div>
                             </div>
                         </div>
 <!--                        <div id="player-controls" class="controls" data-states="hidden">-->
@@ -21,7 +27,7 @@
 <!--                                    <span id="progress-bar"></span>-->
 <!--                                </progress>-->
 <!--                            </div>-->
-<!--                            <button id="mute" type="button" data-state="mute" (click)="muteListener()"></button>-->
+<!--                     \       <button id="mute" type="button" data-state="mute" (click)="muteListener()"></button>-->
 <!--                            <button id="fs" type="button" data-state="go-fullscreen"></button>-->
 <!--                        </div>-->
 <!--                </figure>-->

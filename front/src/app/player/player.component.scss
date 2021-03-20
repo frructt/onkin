@@ -35,17 +35,23 @@ video {
 
 .controls {
     display: flex;
+    //flex-direction: row;
+    //justify-content: center;
     position: absolute;
     bottom: 0;
     width: 100%;
     flex-wrap: wrap;
     background: rgba(0, 0, 0, 0.7);
-    transform: translateY(100%) translateY(-5px);
+    transform: translateY(0) translateY(-5px);
     transition: all 0.3s;
 }
 
 .buttons {
+    width: 100%;
     padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .buttons button {
@@ -56,9 +62,8 @@ video {
 }
 
 .buttons button:before {
-    content: '\f04b';
     font-family: "Font Awesome 5 Free";
-    display: inline-block;
+    //display: inline-block;
     width: 30px;
     height: 30px;
     font-size: 28px;
@@ -68,10 +73,27 @@ video {
 
 .buttons button.play:before {
     content: "\f04b";
+    // content: url("../../assets/images/play.png");
 }
 
 .buttons button.pause:before {
     content: "\f04c";
+}
+
+.buttons button.up:before {
+    content: "\f028";
+}
+
+.buttons button.mute:before {
+    content: "\f6a9";
+}
+
+.buttons button.off:before {
+    content: "\f065";
+}
+
+.buttons button.on:before {
+    content: "\f066";
 }
 
 .playback {
