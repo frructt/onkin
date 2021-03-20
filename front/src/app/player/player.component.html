@@ -4,15 +4,14 @@
         <div class="d-sm-flex flex-row">
             <div class="c_video">
 <!--                <figure id="videoContainer">-->
-                        <video id="videoId" [src]="videoItem.src" (play)="changeButtonState('playpause')"
-                               (pause)="changeButtonState('playpause')" (volumechange)="checkVolume('')" preload>
+                        <video id="videoId" [src]="videoItem.src" (timeupdate)="playbackListener($event)" preload>
                         </video>
                         <div class="controls">
-                            <div class="background_bar">
-                                <div class="controls_bar"></div>
+                            <div class="playback">
+                                <div class="playback_bar"></div>
                             </div>
                             <div class="buttons">
-                                <button id="play-pause"></button>
+                                <button id="play-pause" (click)="togglePlayPause($event)"></button>
                             </div>
                         </div>
 <!--                        <div id="player-controls" class="controls" data-states="hidden">-->

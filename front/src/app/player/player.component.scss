@@ -1,7 +1,5 @@
-
 .player_container{
     display: flex;
-    background: #ccc;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -24,10 +22,15 @@ video {
     width: 100%;
 }
 
+.c_video:hover .controls {
+    transform: translateY(0);
+}
+
 .c_video {
     width: 100%;
     max-width: 800px;
     position: relative;
+    overflow: hidden;
 }
 
 .controls {
@@ -37,6 +40,12 @@ video {
     width: 100%;
     flex-wrap: wrap;
     background: rgba(0, 0, 0, 0.7);
+    transform: translateY(100%) translateY(-5px);
+    transition: all 0.3s;
+}
+
+.buttons {
+    padding: 10px;
 }
 
 .buttons button {
@@ -46,15 +55,36 @@ video {
     cursor: pointer;
 }
 
-.buttons button::before {
-    content: "\f04b";
-    font-family: "Font Awesome 5 Free", sans-serif;
+.buttons button:before {
+    content: '\f04b';
+    font-family: "Font Awesome 5 Free";
+    display: inline-block;
     width: 30px;
     height: 30px;
-    display: inline-block;
     font-size: 28px;
-    color: #fff;
-    -webkit-font-smoothing: antialiased;
+    color: #ffffff;
+    font-weight: 900;
+}
+
+.buttons button.play:before {
+    content: "\f04b";
+}
+
+.buttons button.pause:before {
+    content: "\f04c";
+}
+
+.playback {
+    height: 10px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #5c5e5c;
+}
+
+.playback_bar {
+    height: 10px;
+    background-color: #d4d2d2;
 }
 
 .chat{
