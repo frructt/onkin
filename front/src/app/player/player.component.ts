@@ -197,14 +197,24 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   formatSeconds(secs: number): string {
     let hours: any = Math.floor(secs / (60 * 60))
-    hours = this.intToString(hours);
 
     const divisorForMinutes = secs % (60 * 60)
     let minutes: any = Math.floor(divisorForMinutes / 60)
-    minutes = this.intToString(minutes);
 
     const divisorForSeconds = divisorForMinutes % (60)
     let seconds: any = Math.ceil(divisorForSeconds)
+
+    if (seconds === 60) {
+      seconds = 0;
+      minutes = minutes + 1
+      if (minutes === 60) {
+        minutes = 0;
+        hours = hours + 1
+      }
+    }
+
+    hours = this.intToString(hours);
+    minutes = this.intToString(minutes);
     seconds = this.intToString(seconds);
 
     return hours + ':' + minutes + ':' + seconds;
