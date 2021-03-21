@@ -4,7 +4,7 @@ import { ChatMessageDto } from '@app/_models'
 import {HttpResponse} from '@angular/common/http';
 import {NgForm} from '@angular/forms'
 import {User} from '@app/_models';
-import {map, switchMap} from 'rxjs/operators';
+import {map, min, switchMap} from 'rxjs/operators';
 import { RoomService } from '@app/_services';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 
@@ -29,6 +29,8 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   volumeUpMuteBtn;
   onOffFullScreenBtn;
   videoFrame;
+  currentTime;
+  totalTime;
   // video = document.createElement('video');
   isPlaying: boolean;
   // message: string;
@@ -70,6 +72,8 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.volumeUpMuteBtn = document.getElementById('up-mute');
     this.onOffFullScreenBtn = document.getElementById('on-off');
     this.videoFrame = document.querySelector('.c_video');
+    this.currentTime = '00:00:00';
+    this.totalTime = '00:00:00';
 
 
     this.onPauseEvent();
@@ -128,11 +132,11 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   toggleVolumeUpMute($event: MouseEvent) {
     if (this.video.volume === 0) {
-      this.volumeUpMuteBtn.className = 'mute';
+      this.volumeUpMuteBtn.className = 'up';
       this.video.volume = 1
     }
     else {
-      this.volumeUpMuteBtn.className = 'up';
+      this.volumeUpMuteBtn.className = 'mute';
       this.video.volume = 0
     }
   }
@@ -177,12 +181,37 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  playbackListener(ev) {
+  timeupdateListener(ev) {
     const barPos = this.video.currentTime / this.video.duration;
     this.playbackBar.style.width = barPos * 100 + '%';
+    this.currentTime = this.formatSeconds(this.video.currentTime)
     if (this.video.ended) {
       this.playPauseBtn.className = 'play';
     }
+  }
+
+  loadedMetaDataListener(ev) {
+    const totalSec = this.video.duration;
+    this.totalTime = this.formatSeconds(totalSec);
+  }
+
+  formatSeconds(secs: number): string {
+    let hours: any = Math.floor(secs / (60 * 60))
+    hours = this.intToString(hours);
+
+    const divisorForMinutes = secs % (60 * 60)
+    let minutes: any = Math.floor(divisorForMinutes / 60)
+    minutes = this.intToString(minutes);
+
+    const divisorForSeconds = divisorForMinutes % (60)
+    let seconds: any = Math.ceil(divisorForSeconds)
+    seconds = this.intToString(seconds);
+
+    return hours + ':' + minutes + ':' + seconds;
+  }
+
+  intToString(time) {
+    return time < 10 ? ('0' + time) : time
   }
   // end: player functions
 
