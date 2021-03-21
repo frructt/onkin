@@ -1,8 +1,13 @@
 .player_container{
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+}
+
+.player-chat-container {
+  width: 100%;
 }
 
 /* This page only has the background video,
@@ -48,10 +53,11 @@ video {
 
 .buttons {
     width: 100%;
-    padding: 10px;
+    padding: 0 10px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 }
 
 .buttons button {
@@ -94,6 +100,31 @@ video {
 
 .buttons button.on:before {
     content: "\f066";
+}
+
+.left {
+  //width: 20%;
+  display: flex;
+  flex-direction: row;
+  //justify-content: flex-start;
+  //align-items: center;
+}
+
+.all_time {
+  color: white;
+
+  padding-left: 20px;
+  padding-top: 16px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  //align-items: baseline;
+  //margin-bottom: -10px;
+}
+
+.slash {
+  padding: 0 6px;
 }
 
 .playback {
