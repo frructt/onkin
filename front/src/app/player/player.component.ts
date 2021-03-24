@@ -1,12 +1,8 @@
 import {Component, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {AuthenticationService, SocketioService, VideoService} from '@app/_services';
-import { ChatMessageDto } from '@app/_models'
-import {HttpResponse} from '@angular/common/http';
+import {ChatMessageDto} from '@app/_models'
 import {NgForm} from '@angular/forms'
-import {User} from '@app/_models';
-import {map, min, switchMap} from 'rxjs/operators';
-import { RoomService } from '@app/_services';
-import { NgScrollbarModule } from 'ngx-scrollbar';
+import {map, switchMap} from 'rxjs/operators';
 
 
 @Component({
@@ -25,6 +21,8 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   data;
   video;
   playbackBar;
+  seekbar;
+  seekslide;
   playPauseBtn;
   volumeUpMuteBtn;
   onOffFullScreenBtn;
@@ -68,6 +66,8 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
     this.video = document.getElementById('videoId');
     this.playbackBar = document.querySelector('.playback_bar');
+    this.seekbar = document.getElementById('seek');
+    this.seekslide = document.getElementById('red');
     this.playPauseBtn = document.getElementById('play-pause');
     this.volumeUpMuteBtn = document.getElementById('up-mute');
     this.onOffFullScreenBtn = document.getElementById('on-off');
@@ -182,12 +182,17 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   timeupdateListener(ev) {
-    const barPos = this.video.currentTime / this.video.duration;
-    this.playbackBar.style.width = barPos * 100 + '%';
-    this.currentTime = this.formatSeconds(this.video.currentTime)
+    const barPos = this.video.currentTime * (100 / this.video.duration);
+    this.seekbar.value = barPos;
+    this.playbackBar.style.width = barPos + '%';
+    this.currentTime = this.formatSeconds(this.video.currentTime);
     if (this.video.ended) {
       this.playPauseBtn.className = 'play';
     }
+  }
+
+  seekUpdate() {
+    this.video.currentTime = this.video.duration * (this.seekbar.value / 100);
   }
 
   loadedMetaDataListener(ev) {

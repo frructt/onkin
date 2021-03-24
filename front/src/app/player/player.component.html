@@ -5,6 +5,7 @@
       </video>
       <div class="controls">
         <div class="playback">
+          <input type="range" id="seek" name="seek" value="0" min="0" (change)="seekUpdate()">
           <div class="playback_bar"></div>
         </div>
         <div class="buttons">
