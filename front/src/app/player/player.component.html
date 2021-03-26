@@ -1,13 +1,20 @@
 <div class="player_container">
   <div class="d-sm-flex flex-row">
     <div class="c_video">
-      <video id="videoId" [src]="videoItem.src" (timeupdate)="timeupdateListener($event)" (loadedmetadata)="loadedMetaDataListener($event)">
+      <video id="videoId" [src]="videoItem.src" (timeupdate)="timeupdateListener($event)" (loadedmetadata)="loadedMetaDataListener($event)"
+      >
       </video>
       <div class="controls">
-        <div class="playback">
-          <input type="range" id="seek" name="seek" value="0" min="0" (change)="seekUpdate()">
-          <div class="playback_bar"></div>
+        <div class="video-progress">
+          <progress  id="progress-bar" value="0"></progress>
+          <input class="seek" type="range" id="seek" value="0" min="0" step="1" (input)="skipAhead($event)"
+          (mousemove)="updateSeekTooltip($event)">
+          <div class="seek-tooltip" id="seek-tooltip">00:00:00</div>
         </div>
+<!--        <div class="playback">-->
+<!--          <input type="range" id="seek" name="seek" value="0" min="0" (change)="seekUpdate()">-->
+<!--          <div class="playback_bar"></div>-->
+<!--        </div>-->
         <div class="buttons">
           <div class="left">
             <button id="play-pause" class="play" (click)="togglePlayPause($event)"></button>
@@ -15,7 +22,7 @@
 
             <div class="all_time">
               <div class="current_time">
-                <p>{{ currentTime }}</p>
+                <p>{{ currentTimeFormat }}</p>
               </div>
               <div class="slash">
                 <p>/</p>

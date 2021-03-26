@@ -2,7 +2,7 @@ import {Component, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/c
 import {AuthenticationService, SocketioService, VideoService} from '@app/_services';
 import {ChatMessageDto} from '@app/_models'
 import {NgForm} from '@angular/forms'
-import {map, switchMap} from 'rxjs/operators';
+import {map, skip, switchMap} from 'rxjs/operators';
 
 
 @Component({
@@ -20,14 +20,16 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   videoItem;
   data;
   video;
-  playbackBar;
+  // playbackBar;
   seekbar;
-  seekslide;
+  seekTooltip;
+  // seekslide;
+  progressBar;
   playPauseBtn;
   volumeUpMuteBtn;
   onOffFullScreenBtn;
   videoFrame;
-  currentTime;
+  currentTimeFormat;
   totalTime;
   // video = document.createElement('video');
   isPlaying: boolean;
@@ -65,14 +67,16 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     ).subscribe(result => console.log('merged: ', result))
 
     this.video = document.getElementById('videoId');
-    this.playbackBar = document.querySelector('.playback_bar');
+    // this.playbackBar = document.querySelector('.playback_bar');
     this.seekbar = document.getElementById('seek');
-    this.seekslide = document.getElementById('red');
+    this.progressBar = document.getElementById('progress-bar');
+    this.seekTooltip = document.getElementById('seek-tooltip');
+    // this.seekslide = document.getElementById('red');
     this.playPauseBtn = document.getElementById('play-pause');
     this.volumeUpMuteBtn = document.getElementById('up-mute');
     this.onOffFullScreenBtn = document.getElementById('on-off');
     this.videoFrame = document.querySelector('.c_video');
-    this.currentTime = '00:00:00';
+    this.currentTimeFormat = '00:00:00';
     this.totalTime = '00:00:00';
 
 
@@ -182,20 +186,41 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   timeupdateListener(ev) {
-    const barPos = this.video.currentTime * (100 / this.video.duration);
-    this.seekbar.value = barPos;
-    this.playbackBar.style.width = barPos + '%';
-    this.currentTime = this.formatSeconds(this.video.currentTime);
+    // const barPos = this.video.currentTime * (100 / this.video.duration);
+    // this.seekbar.value = barPos;
+    // this.playbackBar.style.width = barPos + '%';
+    this.seekbar.value = Math.floor(this.video.currentTime);
+    this.progressBar.value = Math.floor(this.video.currentTime);
+    this.currentTimeFormat = this.formatSeconds(this.video.currentTime);
     if (this.video.ended) {
       this.playPauseBtn.className = 'play';
     }
   }
 
-  seekUpdate() {
-    this.video.currentTime = this.video.duration * (this.seekbar.value / 100);
+  updateSeekTooltip(event) {
+    const skipTo = Math.round(
+      (event.offsetX / event.currentTarget.clientWidth) * parseInt(event.currentTarget.getAttribute('max'), 10)
+    );
+    this.seekbar.setAttribute( 'data-seek', String(skipTo));
+    this.seekTooltip.textContent = this.formatSeconds(skipTo);
+    const rect = this.video.getBoundingClientRect();
+    this.seekTooltip.style.left = `${event.pageX - rect.left}px`;
+  }
+
+  skipAhead(event) {
+    // this.video.currentTime = this.video.duration * (this.seekbar.value / 100);
+    const skipTo = event.currentTarget.dataset.seek
+      ? event.currentTarget.dataset.seek
+      : event.currentTarget.value
+    this.video.currentTime = skipTo;
+    this.progressBar.value = skipTo;
+    this.seekbar.value = skipTo;
   }
 
   loadedMetaDataListener(ev) {
+    const videoDuration = Math.round(this.video.duration);
+    this.seekbar.setAttribute('max', String(videoDuration));
+    this.progressBar.setAttribute( 'max', String(videoDuration))
     const totalSec = this.video.duration;
     this.totalTime = this.formatSeconds(totalSec);
   }
