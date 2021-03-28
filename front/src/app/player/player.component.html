@@ -1,5 +1,11 @@
 <div class="player_container">
-  <div class="d-sm-flex flex-row">
+<!--  <div class="d-sm-flex flex-row">-->
+  <div class="video_roomid">
+
+    <div class="room_id">
+      <p>ROOMID</p>
+    </div>
+
     <div class="c_video">
       <video id="videoId" [src]="videoItem.src" (timeupdate)="timeupdateListener($event)" (loadedmetadata)="loadedMetaDataListener($event)"
       >
@@ -37,9 +43,10 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> <!-- end of video player tag -->
+  </div> <!-- end of video plaer and chat id tags -->
 
-    <div class="col-md-4 chat" id="chatForm">
+    <div class="chat" id="chatForm">
       <div class="card">
         <div class="card-header msg_head">
           <div class="d-flex">
@@ -110,7 +117,8 @@
         </div>
       </div>
     </div>
-  </div>
+    <!--  end of chat tag-->
+<!--  </div>-->
 </div>
 
 <!--<div class="mesgs">-->
