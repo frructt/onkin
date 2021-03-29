@@ -204,7 +204,30 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.seekbar.setAttribute( 'data-seek', String(skipTo));
     this.seekTooltip.textContent = this.formatSeconds(skipTo);
     const rect = this.video.getBoundingClientRect();
-    this.seekTooltip.style.left = `${event.pageX - rect.left}px`;
+    const curTooltipX= event.pageX - rect.left;
+    let rightBorder: number;
+    let leftBorder: number;
+    if (Math.trunc(rect.width) <= 460) {
+      rightBorder = (rect.width * 92) / 100
+      leftBorder = (rect.width * 5) / 100
+    }
+    else if (Math.trunc(rect.width) <= 740) {
+      rightBorder = (rect.width * 95) / 100
+      leftBorder = (rect.width * 3) / 100
+    }
+    else {
+      rightBorder = (rect.width * 97.6) / 100
+      leftBorder = (rect.width * 1.4) / 100
+    }
+    if (curTooltipX > rightBorder) {
+      this.seekTooltip.style.left = `${rightBorder}px`;
+    }
+    else if (curTooltipX < leftBorder) {
+      this.seekTooltip.style.left = `${leftBorder}px`;
+    }
+    else {
+      this.seekTooltip.style.left = `${event.pageX - rect.left}px`;
+    }
   }
 
   skipAhead(event) {
