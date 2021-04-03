@@ -77,6 +77,10 @@ video {
     font-weight: 900;
 }
 
+//.high {
+//  width: 34px;
+//}
+
 .buttons button.play:before {
     content: "\f04b";
     // content: url("../../assets/images/play.png");
@@ -86,12 +90,19 @@ video {
     content: "\f04c";
 }
 
-.buttons button.up:before {
+.buttons button.high:before {
     content: "\f028";
+    //width: 31.5px;
+}
+
+.buttons button.low:before {
+    content: "\f027";
+    //width: 40px;
 }
 
 .buttons button.mute:before {
     content: "\f6a9";
+    width: 31.5px;
 }
 
 .buttons button.off:before {
@@ -188,7 +199,7 @@ progress::-moz-progress-bar {
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-input[type=range] {
+input[type=range].seek {
   -webkit-appearance: none;
   -moz-appearance: none;
   height: 5px;
@@ -196,11 +207,11 @@ input[type=range] {
   cursor: pointer;
 }
 
-input[type=range]:focus {
+input[type=range].seek:focus {
   outline: none;
 }
 
-input[type=range]::-webkit-slider-runnable-track {
+input[type=range].seek::-webkit-slider-runnable-track {
   width: 100%;
   cursor: pointer;
   border-radius: 1.3px;
@@ -208,21 +219,22 @@ input[type=range]::-webkit-slider-runnable-track {
   transition: all 0.4s ease;
 }
 
-input[type=range]::-webkit-slider-thumb {
+input[type=range].seek::-webkit-slider-thumb {
   height: 16px;
   width: 16px;
   border-radius: 16px;
   background: #FFDEAD;
   cursor: pointer;
   -webkit-appearance: none;
+  -moz-appearance: none;
   margin-left: -1px;
 }
 
-input[type=range]:focus::-webkit-slider-runnable-track {
+input[type=range].seek:focus::-webkit-slider-runnable-track {
   background: transparent;
 }
 
-input[type=range]::-moz-range-track {
+input[type=range].seek::-moz-range-track {
   width: 100%;
   height: 8.4px;
   cursor: pointer;
@@ -231,7 +243,7 @@ input[type=range]::-moz-range-track {
   border-radius: 1.3px;
 }
 
-input[type=range]::-moz-range-thumb {
+input[type=range].seek::-moz-range-thumb {
   height: 14px;
   width: 14px;
   border-radius: 50px;
@@ -241,13 +253,85 @@ input[type=range]::-moz-range-thumb {
   margin-top: 5px;
 }
 
-input[type=range]:focus::-moz-range-track {
+input[type=range].seek:focus::-moz-range-track {
   outline: none;
 }
 
-input[type=range].volume::-moz-range-thumb {
-  border: 1px solid #fff;
-  background: #fff;
+.volume-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 150px;
+
+  margin-right: 10px;
+}
+
+.volume-container {
+  width: 32px;
+}
+
+.volume-range-container {
+
+}
+
+.volume-controls input {
+  width: 100px;
+  opacity: 1;
+  transition: all 0.4s ease;
+}
+
+.volume-controls:hover input, .volume-controls input:focus {
+  width: 100px;
+  opacity: 1;
+  outline: none;
+  border: none;
+}
+
+input[type=range].volume {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  height: 5px;
+  padding: 0;
+  border-radius: 2px;
+  background-image: -webkit-gradient(linear,
+        left top,
+        right top,
+        color-stop(100%, #df7164),
+        color-stop(100%, #F5D0CC));
+
+  //background-image: -moz-linear-gradient(left center,
+  //      #DF7164 0%, #DF7164 15%,
+  //      #F5D0CC 15%, #F5D0CC 100%);
+}
+
+//input[type=range].volume::-moz-range-track {
+//    border: none;
+//    background: none;
+//    outline: none;
+//}
+
+//input[type=range].volume::-webkit-slider-runnable-track {
+//  -webkit-appearance: none;
+//  background: rgba(0, 125, 181, 0.6);
+//  margin-top: -1px;
+//}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    background-color: #df7164;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+}
+
+input[type=range]::-moz-range-thumb {
+    -moz-appearance: none !important;
+    background-color: #df7164;
+    border: none;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
 }
 
 //.playback input[type="range"] {
@@ -274,12 +358,12 @@ input[type=range].volume::-moz-range-thumb {
 //  opacity: 1;
 //}
 //
-//.playback_bar {
-//  height: 5px;
-//  background-color: #5c5e5c;
-//  width: 100%;
-//  position: absolute;
-//}
+.playback_bar {
+  // height: 5px;
+  background-color: #5c5e5c;
+  width: 100%;
+  position: absolute;
+}
 
 .chat{
     margin-top: auto;

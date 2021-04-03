@@ -26,7 +26,8 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   // seekslide;
   progressBar;
   playPauseBtn;
-  volumeUpMuteBtn;
+  volumeBtn;
+  volume;
   onOffFullScreenBtn;
   videoFrame;
   currentTimeFormat;
@@ -73,7 +74,8 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.seekTooltip = document.getElementById('seek-tooltip');
     // this.seekslide = document.getElementById('red');
     this.playPauseBtn = document.getElementById('play-pause');
-    this.volumeUpMuteBtn = document.getElementById('up-mute');
+    this.volumeBtn = document.getElementById('volume-button');
+    this.volume = document.getElementById('volume');
     this.onOffFullScreenBtn = document.getElementById('on-off');
     this.videoFrame = document.querySelector('.c_video');
     this.currentTimeFormat = '00:00:00';
@@ -134,14 +136,35 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  toggleVolumeUpMute($event: MouseEvent) {
-    if (this.video.volume === 0) {
-      this.volumeUpMuteBtn.className = 'up';
-      this.video.volume = 1
+  toggleMute() {
+    if (!this.video.muted) {
+      this.volumeBtn.className = 'mute';
+      this.volume.setAttribute('data-volume', this.volume.value);
+      this.volume.value = 0;
+      this.video.muted = true;
+    } else {
+      this.volume.value = this.volume.dataset.volume;
+      this.video.muted = false;
     }
-    else {
-      this.volumeUpMuteBtn.className = 'mute';
-      this.video.volume = 0
+  }
+
+  updateVolume() {
+    if (this.video.muted) {
+      this.video.muted = false
+    }
+    this.video.volume = this.volume.value;
+    const val = this.volume.value / this.volume.max * 100
+    this.volume.style.backgroundImage = '-webkit-gradient(linear, left top, right top, ' +
+      'color-stop(' + val + '%, #df7164), color-stop(' + val + '%, #F5D0CC))';
+  }
+
+  updateVolumeIcon() {
+    if (this.video.muted || this.video.volume === 0) {
+      this.volumeBtn.className = 'mute';
+    } else if (this.video.volume > 0 && this.video.volume <= 0.5) {
+      this.volumeBtn.className = 'low';
+    } else {
+      this.volumeBtn.className = 'high';
     }
   }
 
