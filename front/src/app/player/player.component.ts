@@ -348,12 +348,18 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   openChat () {
     document.getElementById('chatForm').style.display = 'block';
-    document.getElementById('showChat').style.display = 'none';
+    document.getElementById('open_chat_button').style.display = 'none';
+    document.getElementById('open_container_id').style.paddingLeft = '0';
+
+    document.getElementById('video-container').style.maxWidth = '800px';
+
   }
 
   closeChat() {
       document.getElementById('chatForm').style.display = 'none';
-      document.getElementById('showChat').style.display = 'block';
+      document.getElementById('open_chat_button').style.display = 'block';
+      document.getElementById('open_container_id').style.paddingLeft = '20px';
 
+      document.getElementById('video-container').style.maxWidth = '1024px';
   }
 }

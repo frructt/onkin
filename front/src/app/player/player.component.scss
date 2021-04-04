@@ -1,11 +1,17 @@
 .player_container{
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    //display: flex;
+    //justify-content: space-between;
+    //align-items: flex-end;
     //height: 100vh;
 
-  padding-top: 10vh;
+  padding-top: 15vh;
+}
+
+.player_chat {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 }
 
 .video_roomid {
@@ -13,6 +19,16 @@
   flex-direction: column;
   //justify-content: space-between;
   align-items: flex-end;
+
+  padding-right: 100px;
+}
+
+.roomid_open_button {
+  //width: 28%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
 .room_id {
@@ -23,14 +39,38 @@
   font-size: 12pt;
 
   border: 4px solid white;
+  border-radius: 5px;
 }
+
 .room_id p {
   margin: 5px;
 }
 
-.player-chat-container {
-  width: 100%;
+.open_button_container {
+  padding-left: 20px;
 }
+
+.open_container {
+  margin-bottom: 2vh;
+
+  border: 4px solid white;
+  border-radius: 5px;
+}
+
+.open_container button {
+  margin: 4px;
+
+  border: none;
+
+  background: none;
+  color: white;
+  font-weight: bold;
+  font-size: 12pt;
+}
+
+//.player-chat-container {
+//  width: 100%;
+//}
 
 /* This page only has the background video,
 no need to use more refined selectors. */
@@ -58,6 +98,8 @@ video {
     max-width: 800px;
     position: relative;
     overflow: hidden;
+
+  border-radius: 10px;
 }
 
 .controls {
@@ -69,7 +111,7 @@ video {
     width: 100%;
     flex-wrap: wrap;
     background: rgba(0, 0, 0, 0.7);
-    transform: translateY(0) translateY(-5px);
+    transform: translateY(100%) translateY(-5px);
     transition: all 0.3s;
 }
 
@@ -308,9 +350,11 @@ input[type=range].volume::-moz-range-thumb {
   height: 100%;
   //  margin-top: auto;
   //  margin-bottom: auto;
+  //padding-left: 20vw;
 }
 .card{
-    height: 56vh;
+    height: 460px;
+    width: 400px;
     border-radius: 15px !important;
     background-color: #090e15 !important;
 }
@@ -349,9 +393,9 @@ input[type=range].volume::-moz-range-thumb {
   border-radius: 0 0 15px 15px !important;
   border-top: 0 !important;
 }
-  .container{
-    align-content: center;
-  }
+  //.container{
+  //  align-content: center;
+  //}
   .search{
     border-radius: 15px 0 0 15px !important;
     background-color: rgba(0,0,0,0.3) !important;
@@ -564,14 +608,26 @@ color: rgba(255,255,255,0.6);
   padding-bottom: 0;
 }
 
-#close_chat_btn{
+.close_button {
   position: absolute;
   right: 15px;
   top: 10px;
   color: white;
   cursor: pointer;
   font-size: 20px;
+
+  border: none;
+  background: none;
 }
+
+//#close_chat_btn{
+//  position: absolute;
+//  right: 15px;
+//  top: 10px;
+//  color: white;
+//  cursor: pointer;
+//  font-size: 20px;
+//}
 
 @media(max-width: 576px){
 .contacts_card{
