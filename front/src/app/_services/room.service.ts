@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
-import { Room } from '@app/_models';
 import {map} from 'rxjs/operators';
 import {AuthenticationService} from '@app/_services/authentication.service';
 

@@ -31,10 +31,6 @@ export class HomeComponent implements OnInit {
 
       const currentUser = this.authenticationService.currentUserValue;
       if (currentUser) {
-          this.roomService.generateNewRoom(currentUser.username).subscribe(data => {
-            this.authenticationService.currentUserValue.roomId = data.roomId
-            localStorage.setItem('currentUser', JSON.stringify(this.authenticationService.currentUserValue));
-          });
           this.router.navigate(['/player']);
           return true;
       }
