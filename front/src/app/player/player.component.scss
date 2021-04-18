@@ -23,6 +23,36 @@
   padding-right: 100px;
 }
 
+.upper-container {
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.home_button_container {
+  padding-left: 20px;
+}
+
+.home_container {
+  margin-bottom: 2vh;
+
+  border: 4px solid white;
+  border-radius: 5px;
+}
+
+.home_container button {
+  margin: 4px;
+
+  border: none;
+
+  background: none;
+  color: white;
+  font-weight: bold;
+  font-size: 12pt;
+}
+
 .roomid_open_button {
   //width: 28%;
 
@@ -99,7 +129,8 @@ video {
     position: relative;
     overflow: hidden;
 
-  border-radius: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
 .controls {
@@ -435,13 +466,17 @@ input[type=range]::-moz-range-thumb {
   //  margin-top: auto;
   //  margin-bottom: auto;
   //padding-left: 20vw;
+
 }
 .card{
     height: 460px;
     width: 400px;
     border-radius: 15px !important;
     background-color: #090e15 !important;
+
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
+
 .contacts_body{
     padding:  0.75rem 0 !important;
     overflow-y: auto;
