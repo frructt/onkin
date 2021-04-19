@@ -3,7 +3,15 @@
   <div class="player_chat">
     <div class="video_roomid">
 
-      <div class="roomid_open_button">
+      <div class="upper-container">
+
+        <div class="home_button_container" id="home_container_id">
+            <div class="home_container" id="home_chat_button">
+              <button class="home_button">ZEREN</button>
+            </div>
+        </div>
+
+        <div class="roomid_open_button">
 
         <div class="roomid_container">
           <div class="room_id">
@@ -11,18 +19,19 @@
           </div>
         </div>
 
-        <div class="open_button_container" id="open_container_id">
-          <div class="open_container" id="open_chat_button">
-            <button class="open_button" (click)="openChat()">OPEN CHAT</button>
+          <div class="open_button_container" id="open_container_id">
+            <div class="open_container" id="open_chat_button">
+              <button class="open_button" (click)="openChat()">OPEN CHAT</button>
+            </div>
           </div>
+
         </div>
 
       </div>
 
       <div class="c_video" id="video-container">
         <video id="videoId" [src]="videoItem.src" (timeupdate)="timeupdateListener($event)" (loadedmetadata)="loadedMetaDataListener($event)"
-             (volumechange)="updateVolumeIcon()" preload="auto"
-        >
+             (volumechange)="updateVolumeIcon()" preload="auto">
         </video>
         <div class="controls">
           <div class="video-progress">
