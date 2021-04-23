@@ -82,7 +82,6 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.seekbar = document.getElementById('seek');
     this.progressBar = document.getElementById('progress-bar');
     this.seekTooltip = document.getElementById('seek-tooltip');
-    // this.seekslide = document.getElementById('red');
     this.playPauseBtn = document.getElementById('play-pause');
     this.volumeBtn = document.getElementById('volume-button');
     this.volume = document.getElementById('volume');

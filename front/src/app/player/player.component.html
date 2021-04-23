@@ -31,7 +31,7 @@
 
       <div class="c_video" id="video-container">
         <video id="videoId" [src]="videoItem.src" (timeupdate)="timeupdateListener($event)" (loadedmetadata)="loadedMetaDataListener($event)"
-             (volumechange)="updateVolumeIcon()" preload="auto">
+             (volumechange)="updateVolumeIcon()" preload="auto" (play)="playVideo()" (pause)="pauseVideo()" (seeked)="onSeeked()">
         </video>
         <div class="controls">
           <div class="video-progress">
@@ -40,22 +40,13 @@
             (mousemove)="updateSeekTooltip($event)">
             <div class="seek-tooltip" id="seek-tooltip">00:00:00</div>
           </div>
-  <!--        <div class="playback">-->
-  <!--          <input type="range" id="seek" name="seek" value="0" min="0" (change)="seekUpdate()">-->
-  <!--          <div class="playback_bar"></div>-->
-  <!--        </div>-->
           <div class="buttons">
             <div class="left">
               <button id="play-pause" class="play" (click)="togglePlayPause($event)"></button>
               <div class="volume-controls">
-<!--              <div class="volume-container">-->
                 <button id="volume-button" class="high" (click)="toggleMute()"></button>
-<!--              </div>-->
-<!--              <div class="volume-range-container">-->
                <input class="volume" id="volume" value="1" type="range" max="1" min="0" step="0.01"
                      (input)="updateVolume()">
-<!--              </div>-->
-<!--              <div class="playback_bar"></div>-->
               </div>
               <div class="all_time">
                 <div class="current_time">
@@ -153,53 +144,3 @@
     <!--  end of chat tag-->
   </div>
 </div>
-
-<!--<div class="mesgs">-->
-<!--            <button class="close-chat" (click)="closeChat()">-->
-<!--              <img src="assets/images/close.png" alt="close icon">-->
-<!--            </button>-->
-
-<!--              <div class="msg_history">-->
-<!--                <li class="message" *ngFor="let chatMessage of messages">-->
-<!--                  <div-->
-<!--                    *ngIf="-->
-<!--                      chatMessage.username !== currentUser;-->
-<!--                      then incoming_msg;-->
-<!--                      else outgoing_msg-->
-<!--                    "-->
-<!--                  ></div>-->
-
-<!--                  <ng-template #incoming_msg>-->
-<!--                    <div class="incoming_msg">-->
-<!--                      <div class="received_msg">-->
-<!--                        <div class="received_withd_msg">-->
-<!--                          <p>{{ chatMessage.msg }}</p>-->
-<!--                        </div>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </ng-template>-->
-
-<!--                  <ng-template #outgoing_msg>-->
-<!--                    <div class="outgoing_msg">-->
-<!--                      <div class="sent_msg">-->
-<!--                        <p>{{ chatMessage.msg }}</p>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </ng-template>-->
-
-<!--                </li>-->
-<!--              </div>-->
-
-<!--              <div class="type_msg">-->
-<!--                <form class="input_msg_write" (ngSubmit)="sendMessage(sendForm)" #sendForm="ngForm">-->
-<!--                  <input-->
-<!--                    type="text"-->
-<!--                    class="write_msg"-->
-<!--                    placeholder="Type a message"-->
-<!--                    name="newMessage"-->
-<!--                    [ngModel]="newMessage"-->
-<!--                  />-->
-<!--                  <button class="send_btn" type="submit">SEND</button>-->
-<!--                </form>-->
-<!--              </div>-->
-<!--            </div>-->
