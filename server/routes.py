@@ -169,12 +169,11 @@ def login():
     json_data = request.json
     user = User.query.filter_by(username=json_data["username"]).first()
     if user:
-        return make_response({"message": "Login is already exist"}, 401)
+        return make_response({"message": "Login is already exist"}, 409)
     # create new user
     else:
         user = User(
-            username=json_data["username"],
-            password=json_data["password"]
+            username=json_data["username"]
         )
         try:
             # add new user to db

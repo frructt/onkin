@@ -3,6 +3,7 @@ import {AuthenticationService, RoomService, SocketioService, VideoService} from 
 import {ChatMessageDto} from '@app/_models'
 import {NgForm} from '@angular/forms'
 import {map, skip, switchMap} from 'rxjs/operators';
+import {Router} from "@angular/router";
 
 
 @Component({
@@ -44,6 +45,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   constructor(private videoService: VideoService,
               private authenticationService: AuthenticationService,
               private socket: SocketioService,
+              private router: Router,
               private roomService: RoomService) {
     socket.connect();
     this.currentUser = this.authenticationService.currentUserValue.username;
@@ -53,13 +55,14 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    if (localStorage.getItem('chatHistory')) {
-      this.messages = JSON.parse(localStorage.getItem('chatHistory'))
+    if (sessionStorage.getItem('chatHistory')) {
+      this.messages = JSON.parse(sessionStorage.getItem('chatHistory'))
     }
     if (!this.authenticationService.currentUserValue.roomId || this.authenticationService.currentUserValue.roomId === '') {
       this.roomService.generateNewRoom(this.currentUser).subscribe(data => {
         this.authenticationService.currentUserValue.roomId = data.roomId
-        localStorage.setItem('currentUser', JSON.stringify(this.authenticationService.currentUserValue));
+        this.roomId = data.roomId
+        sessionStorage.setItem('currentUser', JSON.stringify(this.authenticationService.currentUserValue));
       });
     }
     this.videoService.getVideo()
@@ -114,7 +117,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
           data.timestamp = this.getDate()
           const chatMessageDto = new ChatMessageDto(data.username, data.msg, data.roomId, data.timestamp)
           this.messages.push(chatMessageDto)
-          localStorage.setItem('chatHistory', JSON.stringify(this.messages));
+          sessionStorage.setItem('chatHistory', JSON.stringify(this.messages));
         } else {
             // printSysMsg(data.msg)
         }
@@ -417,5 +420,13 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
       document.getElementById('open_container_id').style.paddingLeft = '20px';
 
       document.getElementById('video-container').style.maxWidth = '1024px';
+  }
+
+  onHomeSubmit() {
+    const currentUser = this.authenticationService.currentUserValue;
+    if (currentUser) {
+      this.router.navigate(['/']);
+      return true;
+    }
   }
 }

@@ -21,7 +21,7 @@ export class RoomService {
             .pipe(map(response => {
                   // add room credentials in local storage to keep user added in current room
                   this.authenticationService.currentUserValue.roomId = roomId
-                  localStorage.setItem('currentUser', JSON.stringify(this.authenticationService.currentUserValue));
+                  sessionStorage.setItem('currentUser', JSON.stringify(this.authenticationService.currentUserValue));
                   return response.result;
             }));
     }

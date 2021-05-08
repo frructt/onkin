@@ -12,7 +12,7 @@ export class AuthenticationService {
     public currentUser: Observable<User>;
 
     constructor(private http: HttpClient) {
-        this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
+        this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(sessionStorage.getItem('currentUser')));
         this.currentUser = this.currentUserSubject.asObservable();
     }
 
@@ -20,13 +20,13 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(username: string, password: string) {
-        return this.http.post<any>(`${environment.apiUrl}/login`, { username, password })
+    login(username: string) {
+        return this.http.post<any>(`${environment.apiUrl}/login`, { username })
             .pipe(map(user => {
                 // store user details and basic auth credentials in local storage to keep user logged in between page refreshes
                 user.authdata = user.token;
                 user.roomId = '';
-                localStorage.setItem('currentUser', JSON.stringify(user));
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
                 this.currentUserSubject.next(user);
                 return user;
             }));
@@ -35,7 +35,8 @@ export class AuthenticationService {
     logout() {
         const currentUser = this.currentUserValue.username;
         // remove user from local storage to log user out
-        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
+        sessionStorage.removeItem("chatHistory");
         this.currentUserSubject.next(null);
         return this.http.post<any>(`${environment.apiUrl}/logout`, {username:  currentUser}).subscribe();
     }
