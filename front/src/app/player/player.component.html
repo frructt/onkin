@@ -125,7 +125,7 @@
             </div>
           </ng-scrollbar>
           <div class="card-footer">
-            <form class="input_msg_write" (ngSubmit)="sendMessage(sendForm)" #sendForm="ngForm">
+            <form class="input_msg_write" (ngSubmit)="sendMessage(sendForm)" #sendForm="ngForm" (keydown.enter)="sendMessage(sendForm)">
               <div class="input-group">
                 <div class="input-group-append">
                   <span class="input-group-text attach_btn"></span>
