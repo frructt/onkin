@@ -1,9 +1,19 @@
-import {Component, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
+import {
+  AfterViewInit,
+  Component, ElementRef,
+  OnChanges,
+  OnDestroy,
+  OnInit, QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {AuthenticationService, RoomService, SocketioService, VideoService} from '@app/_services';
 import {ChatMessageDto} from '@app/_models'
 import {NgForm} from '@angular/forms'
 import {map, skip, switchMap} from 'rxjs/operators';
-import {Router} from "@angular/router";
+import {Router} from '@angular/router';
+import {NgScrollbar} from 'ngx-scrollbar';
 
 
 @Component({
@@ -12,7 +22,9 @@ import {Router} from "@angular/router";
   styleUrls: ['./player.component.scss']
 })
 
-export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
+export class PlayerComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
+  @ViewChild('content') content: ElementRef;
+  @ViewChild('scrollbarId') scrollbarId: NgScrollbar;
 
   // socket: SocketioService;
   currentUser: string;
@@ -21,6 +33,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   videoItem;
   data;
   video;
+  chatContainer;
   // playbackBar;
   seekbar;
   seekTooltip;
@@ -38,6 +51,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
   // message: string;
   newMessage = '';
   messages: ChatMessageDto[] = [];
+  last;
   roomId: string;
   dateToday: number
 
@@ -100,6 +114,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.BroadcastMessages();
 
     this.openChat();
+    this.scrollToBottom();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -118,6 +133,7 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
           const chatMessageDto = new ChatMessageDto(data.username, data.msg, data.roomId, data.timestamp)
           this.messages.push(chatMessageDto)
           sessionStorage.setItem('chatHistory', JSON.stringify(this.messages));
+          // this.scrollToBottom();
         } else {
             // printSysMsg(data.msg)
         }
@@ -422,9 +438,27 @@ export class PlayerComponent implements OnInit, OnChanges, OnDestroy {
       document.getElementById('video-container').style.maxWidth = '1024px';
   }
 
+  ngAfterViewInit() {
+    this.scrollToBottom();
+    this.scrollbarId.scrolled.subscribe(e => console.log(e));
+  }
+
+  scrollToBottom = () => {
+    try {
+      this.content.nativeElement.scrollTop = this.content.nativeElement.scrollHeight;
+      // this.chatContainer = document.getElementById('scrollbarId')
+      // this.chatContainer.scrollTo({bottom: 0, duration: 500})
+      this.scrollbarId.scrollTo({bottom: 0})
+    } catch (err) {
+      throw err;
+    }
+  }
+
   onHomeSubmit() {
     const currentUser = this.authenticationService.currentUserValue;
     if (currentUser) {
+      this.authenticationService.currentUserValue.roomId = '';
+      sessionStorage.setItem('currentUser', JSON.stringify(this.authenticationService.currentUserValue));
       this.router.navigate(['/']);
       return true;
     }

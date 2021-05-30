@@ -84,8 +84,8 @@
             </button>
           </div>
           <div class="chat-box-single-line"></div>
-          <ng-scrollbar class="my_scrollbar" track="vertical" appearance="compact">
-            <div class="card-body msg_card_body">
+          <ng-scrollbar class="my_scrollbar" #scrollbarId track="vertical" appearance="compact">
+            <div class="card-body msg_card_body" #content>
               <li class="message" *ngFor="let chatMessage of messages">
                 <div
                   *ngIf="

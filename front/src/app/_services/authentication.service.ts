@@ -36,7 +36,7 @@ export class AuthenticationService {
         const currentUser = this.currentUserValue.username;
         // remove user from local storage to log user out
         sessionStorage.removeItem('currentUser');
-        sessionStorage.removeItem("chatHistory");
+        sessionStorage.removeItem('chatHistory');
         this.currentUserSubject.next(null);
         return this.http.post<any>(`${environment.apiUrl}/logout`, {username:  currentUser}).subscribe();
     }
